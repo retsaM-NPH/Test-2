@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kỷ Yếu 3D - Tích hợp Mobile & Cử chỉ AI Cao cấp</title>
+    <title>Kỷ Yếu Trái Tim 3D</title>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #050505; font-family: 'Microsoft YaHei', 'Songti SC', serif; touch-action: none; }
+        body { margin: 0; overflow: hidden; background-color: #fdf5f6; font-family: 'Microsoft YaHei', 'Songti SC', serif; touch-action: none; }
         #canvas-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 1; }
         
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Great+Vibes&family=Monoton&family=Abril+Fatface&family=Ma+Shan+Zheng&display=swap');
 
         :root {
-            --glass-bg: rgba(20, 20, 25, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-highlight: rgba(255, 255, 255, 0.15);
-            --accent-gold: #d4af37;
-            --text-main: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 105, 180, 0.4);
+            --glass-highlight: rgba(255, 255, 255, 0.9);
+            --accent-gold: #ff1493;
+            --text-main: #333333;
+            --text-sub: #888888;
             --panel-width: 210px;
             --ui-scale: 0.9; 
         }
@@ -28,18 +29,17 @@
             #title-container { top: 5% !important; }
             .title-line { font-size: 30px !important; }
             #top-right-controls { top: 15px !important; right: 15px !important; flex-direction: row !important; } 
-            #gesture-hint { font-size: 11px !important; background: rgba(0,0,0,0.6); padding: 5px; border-radius: 10px; }
+            #gesture-hint { font-size: 11px !important; background: rgba(255,255,255,0.8); color: #ff1493 !important; padding: 5px; border-radius: 10px; box-shadow: 0 0 10px rgba(255,105,180,0.2); }
         }
 
         .glass-panel {
-            background: var(--glass-bg); backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            background: var(--glass-bg); backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
             border-radius: 16px; border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0.5px 0.5px 0px var(--glass-highlight);
+            box-shadow: 0 15px 35px rgba(255, 105, 180, 0.15), inset 1px 1px 0px var(--glass-highlight);
             box-sizing: border-box;
         }
 
-        /* Giao diện UI */
         #left-sidebar, .bottom-left-panel { transition: transform 0.4s ease, opacity 0.4s ease; }
         .panel-hidden { transform: translateX(calc(-1 * var(--panel-width) - 50px)) scale(var(--ui-scale)) !important; opacity: 0 !important; pointer-events: none !important; }
         .hidden { display: none !important; }
@@ -53,52 +53,50 @@
         .bottom-left-panel .elegant-btn { width: 100%; font-size: 10px; height: 28px; position: relative; }
         .elegant-btn input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
 
-        .ui-title-main { font-family: 'SimSun', 'Songti SC', serif; font-size: 14px; font-weight: bold; color: #fff1c1; text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding-bottom: 4px; margin-bottom: 6px; letter-spacing: 2px; text-align: center; }
-        .ui-title-sub { font-size: 12px; color: #b0b0b5; margin-top: 6px; margin-bottom: 3px; letter-spacing: 1px; font-weight: 700; text-transform: uppercase; }
-        .control-label { color: #aaa; font-size: 11px; font-weight: 700; }
+        .ui-title-main { font-family: 'SimSun', 'Songti SC', serif; font-size: 14px; font-weight: bold; color: #ff1493; text-shadow: 0 0 10px rgba(255, 20, 147, 0.2); border-bottom: 1px solid rgba(255, 105, 180, 0.3); padding-bottom: 4px; margin-bottom: 6px; letter-spacing: 2px; text-align: center; }
+        .ui-title-sub { font-size: 12px; color: var(--text-sub); margin-top: 6px; margin-bottom: 3px; letter-spacing: 1px; font-weight: 700; text-transform: uppercase; }
+        .control-label { color: #555; font-size: 11px; font-weight: 700; }
         .control-row { display: flex; flex-direction: column; gap: 1px; margin-bottom: 4px; }
 
-        .particle-scroll-container { max-height: 140px; overflow-y: auto; padding-right: 4px; margin-right: -4px; border-left: 2px solid rgba(212,175,55,0.1); padding-left: 6px; }
-        .elegant-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(212, 175, 55, 0.3); color: #d4af37; padding: 5px 0; cursor: pointer; text-transform: uppercase; font-size: 10px; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; border-radius: 4px; box-sizing: border-box; }
-        .elegant-btn:hover { background: rgba(212, 175, 55, 0.1); border-color: #fff1c1; color: #fff; box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); text-shadow: 0 0 5px rgba(255, 255, 255, 0.8); }
+        .particle-scroll-container { max-height: 140px; overflow-y: auto; padding-right: 4px; margin-right: -4px; border-left: 2px solid rgba(255,105,180,0.2); padding-left: 6px; }
+        
+        .elegant-btn { background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(255, 105, 180, 0.5); color: #ff1493; padding: 5px 0; cursor: pointer; text-transform: uppercase; font-size: 10px; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-weight: bold; }
+        .elegant-btn:hover { background: rgba(255, 105, 180, 0.15); color: #c71585; border-color: #ff1493; box-shadow: 0 0 10px rgba(255, 105, 180, 0.3); }
         .elegant-btn:active { transform: scale(0.98); }
-        .btn-red { border-color: #844; color: #eaa; }
+        .btn-red { border-color: #ff6347; color: #d32f2f; }
 
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin: 3px 0; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 1px; background: rgba(255, 255, 255, 0.2); }
-        input[type=range]::-webkit-slider-thumb { height: 9px; width: 9px; border-radius: 50%; background: #d4af37; -webkit-appearance: none; margin-top: -4px; box-shadow: 0 0 5px rgba(212, 175, 55, 0.8); }
-        .input-glass { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); color: #eebb66; padding: 3px; font-size: 10px; border-radius: 2px; width: 100%; text-align: center; height: 24px; outline: none; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 3px; background: rgba(255, 105, 180, 0.2); border-radius: 2px; }
+        input[type=range]::-webkit-slider-thumb { height: 12px; width: 12px; border-radius: 50%; background: #ff1493; -webkit-appearance: none; margin-top: -4.5px; box-shadow: 0 0 5px rgba(255, 20, 147, 0.5); cursor: pointer; }
+        .input-glass { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(255, 105, 180, 0.3); color: #c71585; padding: 3px; font-size: 10px; border-radius: 4px; width: 100%; text-align: center; height: 24px; outline: none; font-weight: bold; }
         
         #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
         #title-container { position: absolute; top: 10%; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: auto; cursor: move; z-index: 50; padding: 10px; }
-        .title-line { margin: 0; white-space: nowrap; color: #fceea7; text-shadow: 0 0 30px rgba(255, 255, 255, 0.2); }
+        .title-line { margin: 0; white-space: nowrap; color: #ff69b4; text-shadow: 0 0 20px rgba(255, 105, 180, 0.6); }
         
         .top-left-panel { pointer-events: auto; display: flex; flex-direction: column; gap: 4px; padding: 10px; width: 100%; box-sizing: border-box; }
         .interaction-grid { display: flex; gap: 4px; margin-bottom: 4px; }
         
         #top-right-controls { position: absolute; top: 15px; right: 15px; pointer-events: auto; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; z-index: 50; }
-        #webcam-wrapper { position: absolute; bottom: 15px; right: 15px; width: 160px; height: 120px; border: 1px solid rgba(212, 175, 55, 0.5); border-radius: 4px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.9); overflow: hidden; z-index: 20; background: #000; transition: 0.4s; }
+        #webcam-wrapper { position: absolute; bottom: 15px; right: 15px; width: 160px; height: 120px; border: 2px solid #ffb6c1; border-radius: 8px; box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3); overflow: hidden; z-index: 20; background: #fff; transition: 0.4s; pointer-events: auto; }
         #webcam-wrapper.camera-hidden { opacity: 0; pointer-events: none; transform: translateY(20px); }
         #webcam-canvas { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); display: block; }
-        #cam-status { position: absolute; bottom: 5px; right: 5px; width: 6px; height: 6px; background: #550000; border-radius: 50%; box-shadow: 0 0 4px #ff0000; z-index: 30; }
-        #cam-status.active { background: #00ff00; box-shadow: 0 0 6px #00ff00; }
+        #cam-status { position: absolute; bottom: 5px; right: 5px; width: 8px; height: 8px; background: #999; border-radius: 50%; box-shadow: 0 0 4px #000; z-index: 30; }
+        #cam-status.active { background: #00ff00; box-shadow: 0 0 8px #00ff00; }
         
-        /* Modal Video YouTube */
-        #yt-modal {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 9999; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s;
-        }
-        #yt-modal.active { opacity: 1; pointer-events: auto; }
-        .video-wrapper { position: relative; width: 90%; max-width: 800px; aspect-ratio: 16/9; background: #000; border: 2px solid #d4af37; border-radius: 10px; overflow: hidden; box-shadow: 0 0 30px rgba(212,175,55,0.5); }
-        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        #delete-manager { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 60; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: auto; backdrop-filter: blur(10px); }
+        #photo-grid { display: flex; flex-wrap: wrap; gap: 15px; width: 70%; height: 60%; overflow-y: auto; justify-content: center; padding: 20px; border: 1px solid rgba(255,105,180,0.3); margin: 20px 0; background: rgba(255,240,245,0.8); border-radius: 12px; }
+        .photo-item { width: 80px; height: 80px; position: relative; border: 2px solid #ff69b4; cursor: pointer; border-radius: 6px; overflow: hidden; }
+        .photo-thumb { width: 100%; height: 100%; object-fit: cover; }
+        .delete-x { position: absolute; top: -5px; right: -5px; width: 22px; height: 22px; background: #ff4d4d; color: white; border-radius: 50%; text-align: center; line-height: 22px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+        .manager-title { color: #ff1493; font-size: 24px; letter-spacing: 2px; font-weight: bold; }
         
-        #loader { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #050505; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease-out; }
-        .spinner { width: 50px; height: 50px; border: 1px solid rgba(212, 175, 55, 0.1); border-top: 2px solid #d4af37; border-radius: 50%; animation: spin 1s infinite; }
+        #loader { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #fdf5f6; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease-out; }
+        .spinner { width: 60px; height: 60px; border: 3px solid rgba(255, 105, 180, 0.2); border-top: 3px solid #ff1493; border-radius: 50%; animation: spin 1s infinite linear; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        .loader-text { color: #d4af37; font-size: 12px; letter-spacing: 4px; margin-top: 25px; opacity: 0.8; }
+        .loader-text { color: #ff1493; font-size: 14px; letter-spacing: 4px; margin-top: 25px; font-weight: bold; }
         
-        #gesture-hint { position: absolute; bottom: 10px; width: 100%; text-align: center; color: rgba(212,175,55,0.7); font-size: 13px; pointer-events: none; text-shadow: 0 0 5px #000; z-index: 5; }
+        #gesture-hint { position: absolute; bottom: 10px; width: 100%; text-align: center; color: #ff69b4; font-size: 13px; font-weight: bold; pointer-events: none; z-index: 5; text-shadow: 0 1px 3px rgba(255,255,255,0.8); }
     </style>
     <script type="importmap">
         { 
@@ -116,17 +114,8 @@
     <div id="canvas-container"></div>
     
     <div id="title-container">
-        <h1 id="display-line1" class="title-line">Merry</h1>
-        <h1 id="display-line2" class="title-line">Christmas</h1>
-    </div>
-    
-    <!-- Modal Video YouTube -->
-    <div id="yt-modal">
-        <div class="video-wrapper">
-            <iframe id="yt-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        </div>
-        <button class="elegant-btn btn-red glass-panel" onclick="closeVideo()" style="margin-top: 20px; padding: 12px 50px; font-size: 16px;">Đóng Video</button>
-        <p style="color: #888; font-size: 12px; margin-top: 10px;">(Hoặc nắm tay lại để đóng)</p>
+        <h1 id="display-line1" class="title-line">Sweet</h1>
+        <h1 id="display-line2" class="title-line">Memories</h1>
     </div>
 
     <div id="ui-layer">
@@ -148,42 +137,45 @@
                 <div class="control-row">
                     <div style="display:flex; gap:8px; align-items:center; margin-top: 5px;">
                         <input type="range" min="50" max="250" value="100" id="slider-fontsize" oninput="updateTextConfig()">
-                        <input type="color" id="color-picker" value="#fceea7" oninput="updateTextConfig()" style="width:30px; height:20px; border:none;">
+                        <input type="color" id="color-picker" value="#ff69b4" oninput="updateTextConfig()" style="width:30px; height:20px; border:none; padding: 0;">
                     </div>
                 </div>
-                <div class="ui-title-sub" style="border-top:1px solid rgba(255,255,255,0.05); padding-top:6px; margin-top:6px;">Nhạc nền</div>
+                <div class="ui-title-sub" style="border-top:1px solid rgba(255,105,180,0.2); padding-top:6px; margin-top:6px;">Nhạc nền</div>
                 <div style="display:flex; gap:8px; margin-bottom:4px;">
                     <button class="elegant-btn" onclick="toggleMusicPlay()" id="play-btn" style="flex:2;">⏯</button>
                     <button class="elegant-btn" onclick="replayMusic()" style="flex:1;">⟲</button>
                 </div>
                 <input type="range" min="0" max="100" value="50" id="slider-volume" oninput="updateVolume(this.value)">
                 
-                <div class="ui-title-sub" style="border-top:1px solid rgba(255,255,255,0.05); padding-top:6px; margin-top:6px;">Hiệu ứng hạt</div>
+                <div class="ui-title-sub" style="border-top:1px solid rgba(255,105,180,0.2); padding-top:6px; margin-top:6px;">Hiệu ứng hạt</div>
                 <div class="particle-scroll-container">
-                    <span class="control-label">Mật độ hạt (Cây)</span><input type="range" min="500" max="3000" value="1500" id="slider-tree">
-                    <span class="control-label">Mật độ sao (Nền)</span><input type="range" min="500" max="5000" value="2500" id="slider-dust">
+                    <span class="control-label">Mật độ hạt tim</span><input type="range" min="300" max="2000" value="1200" id="slider-tree">
+                    <span class="control-label">Bụi hồng phấn</span><input type="range" min="500" max="3000" value="2000" id="slider-dust">
                 </div>
                 <button class="elegant-btn" style="width:100%; margin-top:8px;" onclick="applyParticleSettings()">⚡ Cập nhật</button>
             </div>
             
             <div class="top-left-panel glass-panel">
-                <div class="ui-title-main">ĐIỀU KHIỂN TƯƠNG TÁC</div>
+                <div class="ui-title-main">TƯƠNG TÁC TAY</div>
                 <div class="interaction-grid">
-                    <button class="elegant-btn" style="flex:1;" onclick="setMode('TREE')">Gom cây</button>
+                    <button class="elegant-btn" style="flex:1;" onclick="setMode('TREE')">Gom tim</button>
                     <button class="elegant-btn" style="flex:1;" onclick="setMode('SCATTER')">Phân tán</button>
                 </div>
-                <button class="elegant-btn" style="width:100%;" onclick="triggerPhotoGrab()">Bắt ảnh</button>
+                <button class="elegant-btn" style="width:100%;" onclick="triggerPhotoGrab()">Bắt ảnh / Xem</button>
             </div>
         </div>
         
         <div class="bottom-left-panel glass-panel">
-            <div class="ui-title-main">QUẢN LÝ DỮ LIỆU</div>
+            <div class="ui-title-main">THÊM DỮ LIỆU CỦA BẠN</div>
+            <!-- Chấp nhận cả ảnh và video nội bộ -->
+            <label class="elegant-btn"> + Thêm Ảnh / Video <input type="file" id="file-input" multiple accept="image/*,video/mp4,video/quicktime"> </label>
+            <button class="elegant-btn" onclick="openDeleteManager()">▣ Quản lý Bộ nhớ</button>
             <label class="elegant-btn"> ♫ Tải nhạc nền <input type="file" id="music-input" accept=".mp3,audio/mpeg"> </label>
             <button class="elegant-btn btn-red" id="toggle-cam-btn" onclick="toggleCameraDisplay()" style="margin-top: 5px;">📸 Bật/Tắt AI Camera</button>
         </div>
     </div>
     
-    <div id="gesture-hint">Cử chỉ: Nắm tay (Cây / Đóng) | Mở tay (Phân tán) | Chụm ngón (Xem) | Vẫy (Chuyển ảnh) | Đẩy tay (Mở Video)</div>
+    <div id="gesture-hint">Vuốt chạm để xoay | Chạm để Xem ảnh/Phát Video | Cử chỉ: Nắm tay (Gom), Mở tay (Phân tán), Đẩy (Video/Tiếp)</div>
     
     <div id="webcam-wrapper">
         <canvas id="webcam-canvas" width="320" height="240"></canvas>
@@ -199,20 +191,19 @@
         import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'; 
         import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision';
 
-        // Danh sách Ảnh - Video Map cố định (Bắt buộc dùng cấu trúc này để đồng bộ)
-        const MEDIA_PAIRS = [
-            { img: 'https://picsum.photos/400/400?random=1', yt: 'dQw4w9WgXcQ' },
-            { img: 'https://picsum.photos/400/400?random=2', yt: 'L_jWHffIx5E' },
-            { img: 'https://picsum.photos/400/400?random=3', yt: 'kJQP7kiw5Fk' },
-            { img: 'https://picsum.photos/400/400?random=4', yt: '9bZkp7q19f0' },
-            { img: 'https://picsum.photos/400/400?random=5', yt: 'tpiyEe_CqB4' }
-        ];
+        // Đổi tên DB để reset database chứa File/Blob thực tế
+        const DB_NAME = "HeartTreeDB_v1"; 
 
         let CONFIG = {
-            colors: { bg: 0x000000, champagneGold: 0xffd966, deepGreen: 0x03180a, accentRed: 0x990000 },
-            particles: { count: window.innerWidth < 768 ? 600 : 1500, dustCount: window.innerWidth < 768 ? 1000 : 2500, treeHeight: 24, treeRadius: 8 },
-            snow: { count: 1000, range: 70, speed: 3.5, sizeBase: 0.12, sizeVar: 0.1 }, 
-            camera: { z: 50 },
+            colors: { 
+                bg: 0xfdf5f6, // Trắng hồng
+                pinkHot: 0xff69b4, 
+                pinkLight: 0xffb6c1, 
+                pinkDeep: 0xff1493,
+                whiteGlow: 0xffffff
+            },
+            particles: { count: window.innerWidth < 768 ? 600 : 1200, dustCount: window.innerWidth < 768 ? 1000 : 2000 },
+            camera: { z: 55 },
             interaction: { rotationSpeed: 1.4 }
         };
 
@@ -223,38 +214,27 @@
             hand: { detected: false, x: 0, y: 0 }, 
             rotation: { x: 0, y: 0 }, 
             uiVisible: true, 
-            cameraVisible: true,
-            isVideoPlaying: false
+            cameraVisible: true
         };
 
         let aiEnabled = true;
 
         const FONT_STYLES = { 
-            'style1': { font: "'Ma Shan Zheng', cursive", spacing: "4px", shadow: "2px 2px 8px rgba(180,50,50,0.8)" }, 
-            'style2': { font: "'Cinzel', serif", spacing: "6px", shadow: "0 0 20px rgba(255,215,0,0.5)" }, 
-            'style3': { font: "'Great Vibes', cursive", spacing: "1px", shadow: "0 0 15px rgba(255,200,255,0.7)" }, 
-            'style4': { font: "'Monoton', cursive", spacing: "1px", shadow: "0 0 10px #fff" }
+            'style1': { font: "'Ma Shan Zheng', cursive", spacing: "4px", shadow: "2px 2px 8px rgba(255,105,180,0.5)" }, 
+            'style2': { font: "'Cinzel', serif", spacing: "6px", shadow: "0 0 20px rgba(255,105,180,0.3)" }, 
+            'style3': { font: "'Great Vibes', cursive", spacing: "1px", shadow: "0 0 15px rgba(255,20,147,0.5)" }, 
+            'style4': { font: "'Monoton', cursive", spacing: "1px", shadow: "0 0 10px #ff69b4" }
         };
 
-        let scene, camera, renderer, composer, mainGroup;
+        let db, scene, camera, renderer, composer, mainGroup;
         let particleSystem = [], photoMeshes = [], photoMeshGroup = new THREE.Group();
-        let snowInstancedMesh, snowDummy = new THREE.Object3D(), snowData = [];
+        let dustSystem = [];
         let clock = new THREE.Clock();
-        let handLandmarker, videoElement, caneTexture;
+        let handLandmarker, videoElement;
         let bgmAudio = new Audio(); bgmAudio.loop = true; let isMusicPlaying = false;
-
-        // --- HÀM TƯƠNG TÁC UI GLOBAL ---
-        window.openVideo = (ytId) => {
-            const url = `https://www.youtube.com/embed/${ytId}?autoplay=1`;
-            document.getElementById('yt-iframe').src = url;
-            document.getElementById('yt-modal').classList.add('active');
-            STATE.isVideoPlaying = true;
-        };
-        window.closeVideo = () => {
-            document.getElementById('yt-modal').classList.remove('active');
-            document.getElementById('yt-iframe').src = "";
-            STATE.isVideoPlaying = false;
-        };
+        
+        // Quản lý video local đang phát
+        let activeVideoEl = null; 
 
         window.toggleUI = () => { 
             STATE.uiVisible = !STATE.uiVisible; 
@@ -275,9 +255,12 @@
         window.replayMusic = () => { if(!bgmAudio.src) return; bgmAudio.currentTime=0; bgmAudio.play(); isMusicPlaying=true; document.getElementById('play-btn').innerText="⏸"; };
         window.updateVolume = (v) => { bgmAudio.volume = v/100; };
         
-        window.setMode = (mode) => { STATE.mode = mode; STATE.focusTarget = null; };
+        window.setMode = (mode) => { 
+            STATE.mode = mode; 
+            STATE.focusTarget = null; 
+            if(activeVideoEl) { activeVideoEl.pause(); activeVideoEl = null; }
+        };
 
-        // --- ĐIỀU HƯỚNG ẢNH BẰNG INDEX CỐ ĐỊNH ---
         window.triggerPhotoGrab = () => { 
             if(photoMeshes.length === 0) return;
             if(STATE.focusIndex === -1) STATE.focusIndex = 0;
@@ -287,22 +270,24 @@
 
         function focusNextPhoto() {
             if(photoMeshes.length === 0) return;
+            if(activeVideoEl) { activeVideoEl.pause(); activeVideoEl = null; }
             STATE.focusIndex = (STATE.focusIndex + 1) % photoMeshes.length;
             STATE.focusTarget = photoMeshes[STATE.focusIndex].mesh;
         }
 
         function focusPrevPhoto() {
             if(photoMeshes.length === 0) return;
+            if(activeVideoEl) { activeVideoEl.pause(); activeVideoEl = null; }
             STATE.focusIndex = (STATE.focusIndex - 1 + photoMeshes.length) % photoMeshes.length;
             STATE.focusTarget = photoMeshes[STATE.focusIndex].mesh;
         }
 
         function loadTextConfig() { 
-            const s = JSON.parse(localStorage.getItem('v16_text_config')); 
+            const s = JSON.parse(localStorage.getItem('v18_text_config')); 
             if(s){ document.getElementById('input-line1').value=s.line1; document.getElementById('input-line2').value=s.line2; document.getElementById('font-select').value=s.fontKey; document.getElementById('slider-fontsize').value=s.size; document.getElementById('color-picker').value=s.color; applyTextConfig(s.fontKey,s.line1,s.line2,s.size,s.color); } 
-            else applyTextConfig("style1","Merry","Christmas",100,"#fceea7"); 
+            else applyTextConfig("style3","Sweet","Memories",120,"#ff1493"); 
         }
-        window.updateTextConfig = () => { const k=document.getElementById('font-select').value, l1=document.getElementById('input-line1').value, l2=document.getElementById('input-line2').value, s=document.getElementById('slider-fontsize').value, c=document.getElementById('color-picker').value; localStorage.setItem('v16_text_config',JSON.stringify({fontKey:k,line1:l1,line2:l2,size:s,color:c})); applyTextConfig(k,l1,l2,s,c); };
+        window.updateTextConfig = () => { const k=document.getElementById('font-select').value, l1=document.getElementById('input-line1').value, l2=document.getElementById('input-line2').value, s=document.getElementById('slider-fontsize').value, c=document.getElementById('color-picker').value; localStorage.setItem('v18_text_config',JSON.stringify({fontKey:k,line1:l1,line2:l2,size:s,color:c})); applyTextConfig(k,l1,l2,s,c); };
         function applyTextConfig(k,l1,l2,s,c) { const st=FONT_STYLES[k]||FONT_STYLES['style1']; const t1=document.getElementById('display-line1'), t2=document.getElementById('display-line2'), ct=document.getElementById('title-container'); ct.style.fontFamily=st.font; t1.innerText=l1; t2.innerText=l2; t1.style.letterSpacing=st.spacing; t2.style.letterSpacing=st.spacing; t1.style.textShadow=st.shadow; t2.style.textShadow=st.shadow; t1.style.color=c; t2.style.color=c; t1.style.fontSize=(0.48*s)+"px"; t2.style.fontSize=(0.48*s)+"px"; }
 
         // --- KHỞI TẠO HỆ THỐNG ---
@@ -312,89 +297,231 @@
                 window.toggleCameraDisplay(); 
             }
 
-            initThree(); setupEnvironment(); setupLights(); createTextures(); createParticles(); createDust(); createSnow(); 
-            loadFixedMedia(); // Thay vì tạo ảnh random
+            initThree(); setupEnvironment(); setupLights(); createParticles(); createDust(); 
             setupPostProcessing(); setupEvents(); animate();
             
             setTimeout(() => { document.getElementById('loader').style.opacity = 0; setTimeout(()=>document.getElementById('loader').remove(), 500); }, 1500);
             
             loadTextConfig();
+            initDB().then(async () => {
+                const medias = await loadMediaFromDB();
+                if(medias?.length > 0) {
+                    medias.forEach(m => {
+                        const url = URL.createObjectURL(m.blob);
+                        createMediaTexture(url, m.id, m.isVideo, m.msg);
+                    });
+                }
+            });
+
             initMediaPipe(); initDraggableTitle(); setupTouchControls();
         }
 
-        // --- CORE THREE.JS ---
         function initThree() { 
-            scene=new THREE.Scene(); scene.background=new THREE.Color(CONFIG.colors.bg); scene.fog=new THREE.FogExp2(CONFIG.colors.bg,0.01); 
+            scene=new THREE.Scene(); scene.background=new THREE.Color(CONFIG.colors.bg); scene.fog=new THREE.FogExp2(CONFIG.colors.bg,0.015); 
             camera=new THREE.PerspectiveCamera(42,window.innerWidth/window.innerHeight,0.1,1000); camera.position.set(0,2,CONFIG.camera.z); 
             renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:"high-performance"}); renderer.setSize(window.innerWidth,window.innerHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio,2)); renderer.toneMapping=THREE.ReinhardToneMapping; renderer.toneMappingExposure=2.2; 
             document.getElementById('canvas-container').appendChild(renderer.domElement); 
             mainGroup=new THREE.Group(); scene.add(mainGroup); 
         }
         function setupEnvironment() { const p=new THREE.PMREMGenerator(renderer); scene.environment=p.fromScene(new RoomEnvironment(),0.04).texture; }
-        function setupLights() { scene.add(new THREE.AmbientLight(0xffffff,0.6)); const i=new THREE.PointLight(0xffaa00,2,20); i.position.set(0,5,0); mainGroup.add(i); const s1=new THREE.SpotLight(0xffcc66,1200); s1.position.set(30,40,40); s1.angle=0.5; s1.penumbra=0.5; scene.add(s1); const f=new THREE.DirectionalLight(0xffeebb,0.8); f.position.set(0,0,50); scene.add(f); }
-        function setupPostProcessing() { composer=new EffectComposer(renderer); composer.addPass(new RenderPass(scene,camera)); const b=new UnrealBloomPass(new THREE.Vector2(window.innerWidth,window.innerHeight),1.5,0.4,0.85); b.threshold=0.7; b.strength=0.45; b.radius=0.4; composer.addPass(b); }
-
-        function createTextures() { const c=document.createElement('canvas'); c.width=128; c.height=128; const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,128,128); x.fillStyle='#800'; x.beginPath(); for(let i=-128;i<256;i+=32){x.moveTo(i,0);x.lineTo(i+32,128);x.lineTo(i+16,128);x.lineTo(i-16,0);} x.fill(); caneTexture=new THREE.CanvasTexture(c); caneTexture.wrapS=caneTexture.wrapT=THREE.RepeatWrapping; caneTexture.repeat.set(3,3); }
-        
-        function createSnow() {
-            const g=new THREE.IcosahedronGeometry(CONFIG.snow.sizeBase,0); const m=new THREE.MeshPhysicalMaterial({color:0xffffff,metalness:0,roughness:0.15,transmission:0.9,thickness:0.5,clearcoat:1});
-            snowInstancedMesh=new THREE.InstancedMesh(g,m,CONFIG.snow.count); snowInstancedMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-            for(let i=0;i<CONFIG.snow.count;i++){ snowDummy.position.set((Math.random()-0.5)*CONFIG.snow.range, Math.random()*CONFIG.snow.range, (Math.random()-0.5)*CONFIG.snow.range); snowDummy.rotation.set(Math.random()*3,Math.random()*3,Math.random()*3); snowDummy.scale.setScalar(0.5+Math.random()*CONFIG.snow.sizeVar); snowDummy.updateMatrix(); snowInstancedMesh.setMatrixAt(i,snowDummy.matrix); snowData.push({vy:(Math.random()*0.5+0.8), rx:(Math.random()-0.5)*2, ry:(Math.random()-0.5)*2, rz:(Math.random()-0.5)*2}); } scene.add(snowInstancedMesh);
+        function setupLights() { 
+            scene.add(new THREE.AmbientLight(0xffffff, 0.8)); 
+            const pointLight = new THREE.PointLight(0xff69b4, 2, 30); pointLight.position.set(0, 5, 0); mainGroup.add(pointLight); 
+            const spotLight1 = new THREE.SpotLight(0xffb6c1, 1000); spotLight1.position.set(30, 40, 40); spotLight1.angle=0.5; spotLight1.penumbra=0.5; scene.add(spotLight1); 
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1); dirLight.position.set(0, 0, 50); scene.add(dirLight); 
+        }
+        function setupPostProcessing() { 
+            composer=new EffectComposer(renderer); composer.addPass(new RenderPass(scene,camera)); 
+            // Bloom threshold cao để nền trắng không bị lóa, chỉ hạt hồng phát sáng
+            const b=new UnrealBloomPass(new THREE.Vector2(window.innerWidth,window.innerHeight), 1.2, 0.6, 0.85); 
+            b.threshold=0.8; b.strength=0.7; b.radius=0.6; composer.addPass(b); 
         }
 
+        // --- DATABASE LOCAL FILES ---
+        function initDB() { 
+            return new Promise(r=>{const q=indexedDB.open(DB_NAME,1);q.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('media'))d.createObjectStore('media',{keyPath:"id"});if(!d.objectStoreNames.contains('music'))d.createObjectStore('music',{keyPath:"id"})};q.onsuccess=e=>{db=e.target.result;r(db)};q.onerror=()=>r(null)});
+        }
+        function saveMediaToDB(blob, isVideo, msg) {
+            if(!db) return null;
+            return new Promise(r => {
+                const id = Date.now().toString() + Math.random().toString(36).substring(2,7);
+                const tx = db.transaction('media',"readwrite");
+                tx.objectStore('media').add({id, blob, isVideo, msg});
+                tx.oncomplete = () => r(id);
+            });
+        }
+        function loadMediaFromDB() {
+            if(!db) return Promise.resolve([]); 
+            return new Promise(r=>{db.transaction('media',"readonly").objectStore('media').getAll().onsuccess=e=>r(e.target.result)});
+        }
+        function deleteMediaFromDB(id){if(db)db.transaction('media',"readwrite").objectStore('media').delete(id);}
+        function clearMediaDB(){if(db)db.transaction('media',"readwrite").objectStore('media').clear();}
+        
+        function saveMusicToDB(b){if(!db)return;db.transaction('music',"readwrite").objectStore('music').put({id:'bgm',blob:b});}
+        function loadMusicFromDB(){if(!db)return Promise.resolve(null);return new Promise(r=>{db.transaction('music',"readonly").objectStore('music').get('bgm').onsuccess=e=>r(e.target.result?e.target.result.blob:null)});}
+
+        // --- MÔ HÌNH TOÁN HỌC TRÁI TIM 3D ---
         class Particle {
-            constructor(m,t,d=false){this.mesh=m;this.type=t;this.isDust=d;this.posTree=new THREE.Vector3();this.posScatter=new THREE.Vector3();this.baseScale=m.scale.x;this.ytId=null;const s=(t==='PHOTO')?0.3:2.0;this.spinSpeed=new THREE.Vector3((Math.random()-0.5)*s,(Math.random()-0.5)*s,(Math.random()-0.5)*s);this.calcPos();}
-            calcPos(){const h=CONFIG.particles.treeHeight;let t=Math.pow(Math.random(),0.8);const y=(t*h)-(h/2);let rm=Math.max(0.5,CONFIG.particles.treeRadius*(1.0-t));const a=t*50*Math.PI+Math.random()*Math.PI;this.posTree.set(Math.cos(a)*rm,y,Math.sin(a)*rm);let rs=this.isDust?(12+Math.random()*20):(8+Math.random()*12);const th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1);this.posScatter.set(rs*Math.sin(ph)*Math.cos(th),rs*Math.sin(ph)*Math.sin(th),rs*Math.cos(ph));}
+            constructor(m,t){this.mesh=m;this.type=t;this.posTree=new THREE.Vector3();this.posScatter=new THREE.Vector3();this.baseScale=m.scale.x;this.isVideo=false;this.videoEl=null;const s=(t==='PHOTO')?0.3:2.0;this.spinSpeed=new THREE.Vector3((Math.random()-0.5)*s,(Math.random()-0.5)*s,(Math.random()-0.5)*s);this.calcPos();}
+            calcPos(){
+                // Trái tim 3D (Thể tích)
+                let u = Math.random() * Math.PI * 2;
+                let v = Math.random() * Math.PI * 2;
+                let rDist = Math.cbrt(Math.random()); 
+                
+                let x = 16 * Math.pow(Math.sin(u), 3);
+                let y = 13 * Math.cos(u) - 5 * Math.cos(2*u) - 2 * Math.cos(3*u) - Math.cos(4*u);
+                let z = 5 * Math.sin(v); // Độ dày
+                z *= (1 - Math.abs(x)/16); // Vát viền mỏng đi
+                
+                let scale = 0.55; 
+                this.posTree.set(x * scale * rDist, (y * scale * rDist) + 5, z * scale * rDist);
+                
+                // Phân tán (Cầu rỗng)
+                let rs = 10 + Math.random()*15;
+                const th = Math.random()*Math.PI*2, ph = Math.acos(2*Math.random()-1);
+                this.posScatter.set(rs*Math.sin(ph)*Math.cos(th), rs*Math.sin(ph)*Math.sin(th), rs*Math.cos(ph));
+            }
             update(dt,mode,ft){
-                let tg=this.posTree; if(mode==='SCATTER')tg=this.posScatter; else if(mode==='FOCUS'){if(this.mesh===ft){let off=new THREE.Vector3(0,1,38);const im=new THREE.Matrix4().copy(mainGroup.matrixWorld).invert();tg=off.applyMatrix4(im);}else tg=this.posScatter;}
+                let tg = this.posTree; 
+                if(mode==='SCATTER') tg = this.posScatter; 
+                else if(mode==='FOCUS'){
+                    if(this.mesh===ft){
+                        let off = new THREE.Vector3(0,0,32);
+                        const im = new THREE.Matrix4().copy(mainGroup.matrixWorld).invert();
+                        tg = off.applyMatrix4(im);
+                    }else tg = this.posScatter;
+                }
+                
                 this.mesh.position.lerp(tg,((mode==='FOCUS'&&this.mesh===ft)?8.0:4.0)*dt);
-                if(mode==='SCATTER'){this.mesh.rotation.x+=this.spinSpeed.x*dt;this.mesh.rotation.y+=this.spinSpeed.y*dt;this.mesh.rotation.z+=this.spinSpeed.z*dt;}else if(mode==='TREE'){this.mesh.rotation.x=THREE.MathUtils.lerp(this.mesh.rotation.x,0,dt);this.mesh.rotation.z=THREE.MathUtils.lerp(this.mesh.rotation.z,0,dt);this.mesh.rotation.y+=0.5*dt;}
-                if(mode==='FOCUS'&&this.mesh===ft){this.mesh.lookAt(camera.position); }
-                let s=this.baseScale;if(this.isDust){s=this.baseScale*(0.8+0.4*Math.sin(clock.elapsedTime*4+this.mesh.id));if(mode==='TREE')s=0;}else if(mode==='SCATTER'&&this.type==='PHOTO')s=this.baseScale*2.5;else if(mode==='FOCUS'){if(this.mesh===ft) s=3.5; else s=this.baseScale*0.8;}this.mesh.scale.lerp(new THREE.Vector3(s,s,s),6*dt);
+                
+                if(mode==='SCATTER'){
+                    this.mesh.rotation.x += this.spinSpeed.x*dt; this.mesh.rotation.y += this.spinSpeed.y*dt; this.mesh.rotation.z += this.spinSpeed.z*dt;
+                } else if(mode==='TREE'){
+                    this.mesh.rotation.x = THREE.MathUtils.lerp(this.mesh.rotation.x,0,dt); this.mesh.rotation.z = THREE.MathUtils.lerp(this.mesh.rotation.z,0,dt);
+                    this.mesh.rotation.y += 0.5*dt;
+                }
+                
+                if(mode==='FOCUS' && this.mesh===ft) this.mesh.lookAt(camera.position); 
+                
+                let s = this.baseScale;
+                if(mode==='SCATTER' && this.type==='PHOTO') s = this.baseScale*2.5;
+                else if(mode==='FOCUS'){ if(this.mesh===ft) s=3.8; else s=this.baseScale*0.8; }
+                this.mesh.scale.lerp(new THREE.Vector3(s,s,s),6*dt);
             }
         }
 
         function createParticles() {
-            const sg=new THREE.SphereGeometry(0.5,16,16); const bg=new THREE.BoxGeometry(0.55,0.55,0.55); const c=new THREE.CatmullRomCurve3([new THREE.Vector3(0,-0.5,0),new THREE.Vector3(0,0.3,0),new THREE.Vector3(0.1,0.5,0),new THREE.Vector3(0.3,0.4,0)]); const cg=new THREE.TubeGeometry(c,8,0.08,8,false);
-            const gm=new THREE.MeshStandardMaterial({color:CONFIG.colors.champagneGold,metalness:1,roughness:0.1}); const grm=new THREE.MeshStandardMaterial({color:CONFIG.colors.deepGreen,metalness:0.2}); const rm=new THREE.MeshPhysicalMaterial({color:CONFIG.colors.accentRed,clearcoat:1}); const cm=new THREE.MeshStandardMaterial({map:caneTexture});
-            for(let i=0;i<CONFIG.particles.count;i++){const r=Math.random();let m,t;if(r<0.4){m=new THREE.Mesh(bg,grm);t='BOX';}else if(r<0.7){m=new THREE.Mesh(bg,gm);t='GOLD_BOX';}else if(r<0.92){m=new THREE.Mesh(sg,gm);t='GOLD_SPHERE';}else if(r<0.97){m=new THREE.Mesh(sg,rm);t='RED';}else{m=new THREE.Mesh(cg,cm);t='CANE';}const s=0.4+Math.random()*0.5;m.scale.setScalar(s);m.rotation.set(Math.random()*6,Math.random()*6,Math.random()*6);mainGroup.add(m);particleSystem.push(new Particle(m,t,false));}
-            const st=new THREE.Mesh(new THREE.OctahedronGeometry(1.2,0),new THREE.MeshStandardMaterial({color:0xffdd88,emissive:0xffaa00})); st.position.set(0,CONFIG.particles.treeHeight/2+1.2,0); mainGroup.add(st); mainGroup.add(photoMeshGroup);
+            const sg=new THREE.SphereGeometry(0.4, 16, 16); 
+            const bg=new THREE.BoxGeometry(0.5,0.5,0.5); 
+            
+            // Chất liệu hồng Glow cực xịn
+            const mHot = new THREE.MeshStandardMaterial({color: CONFIG.colors.pinkHot, emissive: CONFIG.colors.pinkDeep, emissiveIntensity: 1.5, metalness: 0.2}); 
+            const mLight = new THREE.MeshStandardMaterial({color: CONFIG.colors.whiteGlow, emissive: CONFIG.colors.pinkLight, emissiveIntensity: 1.2, metalness: 0.1}); 
+            const mDeep = new THREE.MeshPhysicalMaterial({color: CONFIG.colors.pinkDeep, emissive: 0x880044, emissiveIntensity: 1, clearcoat: 1}); 
+
+            for(let i=0; i<CONFIG.particles.count; i++){
+                const r=Math.random(); let m,t;
+                if(r<0.3){ m=new THREE.Mesh(bg, mLight); t='BOX'; }
+                else if(r<0.7){ m=new THREE.Mesh(sg, mHot); t='SPHERE_HOT'; }
+                else { m=new THREE.Mesh(sg, mDeep); t='SPHERE_DEEP'; }
+                
+                const s = 0.4 + Math.random()*0.6; m.scale.setScalar(s);
+                m.rotation.set(Math.random()*6,Math.random()*6,Math.random()*6);
+                mainGroup.add(m); particleSystem.push(new Particle(m,t));
+            }
+            mainGroup.add(photoMeshGroup);
         }
-        function createDust(){const g=new THREE.TetrahedronGeometry(0.08,0);const m=new THREE.MeshBasicMaterial({color:0xffeebb,transparent:true,opacity:0.8});for(let i=0;i<CONFIG.particles.dustCount;i++){const ms=new THREE.Mesh(g,m);ms.scale.setScalar(0.5+Math.random());mainGroup.add(ms);particleSystem.push(new Particle(ms,'DUST',true));}}
+
+        function createDust(){
+            const g = new THREE.TetrahedronGeometry(0.08,0);
+            const m = new THREE.MeshBasicMaterial({color: 0xffb6c1, transparent:true, opacity:0.6});
+            for(let i=0; i<CONFIG.particles.dustCount; i++){
+                const ms = new THREE.Mesh(g,m);
+                ms.scale.setScalar(0.5+Math.random());
+                const p = new Particle(ms,'DUST');
+                p.isDust = true;
+                dustSystem.push(p);
+                mainGroup.add(ms);
+            }
+        }
         
-        // Tải danh sách ảnh & Map cấu hình sẵn
-        function loadFixedMedia(){
-            MEDIA_PAIRS.forEach((item, index) => {
-                const imgObj = new Image();
-                imgObj.crossOrigin = "anonymous";
-                imgObj.src = item.img;
-                imgObj.onload = () => {
-                    const tex = new THREE.Texture(imgObj); tex.colorSpace = THREE.SRGBColorSpace; tex.needsUpdate = true;
-                    
-                    const aspect = imgObj.width/imgObj.height; let w=1.2, h=1.2; if(aspect>1)h=w/aspect; else w=h*aspect;
-                    const fg = new THREE.BoxGeometry(w+0.2,h+0.2,0.05); const fm = new THREE.MeshStandardMaterial({color:0xc5a059,metalness:0.6}); const f = new THREE.Mesh(fg,fm); 
-                    const pg = new THREE.PlaneGeometry(w,h); const pm = new THREE.MeshBasicMaterial({map:tex}); const p = new THREE.Mesh(pg,pm); p.position.z=0.04; 
-                    
-                    const g = new THREE.Group(); g.add(f); g.add(p); g.scale.setScalar(0.8); photoMeshGroup.add(g); 
-                    const pt = new Particle(g,'PHOTO',false); 
-                    pt.ytId = item.yt; // Gắn Video ID Cố định
-                    
-                    particleSystem.push(pt);
-                    photoMeshes.push(pt); // Lưu riêng mảng để dễ duyệt Next/Prev
-                }
-            });
+        // --- TEXT CARD (LỜI CHÚC) ---
+        function createTextCard(msg) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024; canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+            ctx.roundRect(0, 0, 1024, 256, 30); ctx.fill();
+            ctx.strokeStyle = '#ff69b4'; ctx.lineWidth = 10; ctx.stroke();
+
+            ctx.fillStyle = '#ff1493';
+            ctx.font = 'bold 50px "Microsoft YaHei", sans-serif';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(msg, 512, 128);
+
+            const tex = new THREE.CanvasTexture(canvas); tex.colorSpace = THREE.SRGBColorSpace;
+            const geo = new THREE.PlaneGeometry(1.6, 0.4);
+            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
+            return new THREE.Mesh(geo, mat);
+        }
+
+        function createMediaTexture(url, id, isVideo, msg) {
+            if (isVideo) {
+                const video = document.createElement('video');
+                video.src = url; video.crossOrigin = 'anonymous';
+                video.loop = true; video.muted = false; video.playsInline = true;
+                video.load();
+                
+                const tex = new THREE.VideoTexture(video); tex.colorSpace = THREE.SRGBColorSpace;
+                // Gọi sự kiện load data để lấy tỷ lệ khung hình
+                video.onloadedmetadata = () => { addMediaToScene(tex, id, video.videoWidth/video.videoHeight, true, msg, video); };
+            } else {
+                const img = new Image(); img.src = url;
+                img.onload = () => {
+                    const tex = new THREE.Texture(img); tex.colorSpace = THREE.SRGBColorSpace; tex.needsUpdate = true;
+                    addMediaToScene(tex, id, img.width/img.height, false, msg, null);
+                };
+            }
+        }
+
+        function addMediaToScene(tex, id, aspect, isVideo, msg, videoEl){
+            let w=1.6, h=1.6; if(aspect>1) h=w/aspect; else w=h*aspect;
+            
+            const frameGeo = new THREE.BoxGeometry(w+0.1, h+0.1, 0.05); 
+            const frameMat = new THREE.MeshStandardMaterial({color: 0xffb6c1, metalness: 0.3, roughness: 0.2}); 
+            const frameMesh = new THREE.Mesh(frameGeo, frameMat); 
+            
+            const planeGeo = new THREE.PlaneGeometry(w, h); 
+            const planeMat = new THREE.MeshBasicMaterial({map: tex}); 
+            const planeMesh = new THREE.Mesh(planeGeo, planeMat); planeMesh.position.z=0.03; 
+            
+            const g = new THREE.Group(); g.add(frameMesh); g.add(planeMesh); 
+            
+            // Chèn lời chúc nếu có
+            if (msg && msg.trim() !== "") {
+                const txtMesh = createTextCard(msg);
+                txtMesh.position.y = -(h/2 + 0.3); txtMesh.position.z = 0.02;
+                g.add(txtMesh);
+            }
+            
+            g.scale.setScalar(0.7); photoMeshGroup.add(g); 
+            const pt = new Particle(g,'PHOTO'); 
+            pt.mediaId = id; pt.isVideo = isVideo; pt.videoEl = videoEl;
+            particleSystem.push(pt); photoMeshes.push(pt);
         }
 
         window.applyParticleSettings=()=>{
             const ph = particleSystem.filter(p=>p.type==='PHOTO'); const tr=[];
             mainGroup.children.forEach(c=>{if(c!==photoMeshGroup)tr.push(c)}); tr.forEach(c=>mainGroup.remove(c));
-            particleSystem=[...ph];
+            particleSystem=[...ph]; dustSystem=[];
             CONFIG.particles.count=parseInt(document.getElementById('slider-tree').value);
             CONFIG.particles.dustCount=parseInt(document.getElementById('slider-dust').value);
-            createParticles(); createDust(); createSnow();
+            createParticles(); createDust(); 
         };
 
-        // --- TƯƠNG TÁC VUỐT / CHẠM (MOBILE + DESKTOP FALLBACK) ---
+        // --- TƯƠNG TÁC VUỐT / CHẠM (MOBILE + DESKTOP) ---
         function setupTouchControls() {
             const raycaster = new THREE.Raycaster();
             const mouse = new THREE.Vector2();
@@ -416,13 +543,11 @@
                 isDragging = false;
                 const diffX = e.clientX - startMouse.x;
                 
-                // Nếu Vuốt xa thì đổi ảnh
                 if (Math.abs(diffX) > 50 && STATE.mode === 'FOCUS') {
                     if (diffX < 0) focusNextPhoto(); else focusPrevPhoto();
                     return;
                 }
 
-                // Nếu chỉ chạm nhẹ (Tap)
                 if (Math.abs(diffX) < 10) {
                     mouse.x = (e.clientX / window.innerWidth) * 2 - 1; mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
                     raycaster.setFromCamera(mouse, camera);
@@ -436,16 +561,19 @@
                             STATE.focusIndex = photoMeshes.findIndex(p => p.mesh === obj);
                             setMode('FOCUS'); STATE.focusTarget = obj;
                         } else {
-                            // Chạm lần 2 -> Phát
+                            // Tap lần 2 để Play/Pause Video
                             const pData = photoMeshes.find(p => p.mesh === obj);
-                            if(pData && pData.ytId) openVideo(pData.ytId);
+                            if(pData && pData.isVideo && pData.videoEl) {
+                                if(pData.videoEl.paused) { pData.videoEl.play(); activeVideoEl = pData.videoEl; }
+                                else { pData.videoEl.pause(); activeVideoEl = null; }
+                            }
                         }
                     } else if (STATE.mode === 'FOCUS') setMode('TREE');
                 }
             });
         }
 
-        // --- AI CAMERA CHUẨN UX (NẮM TAY, VẪY TAY, ĐẨY TAY) ---
+        // --- AI CAMERA (CHỐNG LỖI CỬ CHỈ) ---
         async function initMediaPipe(){
             videoElement = document.getElementById('webcam-video');
             if(navigator.mediaDevices?.getUserMedia){
@@ -456,8 +584,6 @@
         function renderWebcamPreview(){const c=document.getElementById('webcam-canvas'),x=c.getContext('2d',{willReadFrequently:true});function d(){if(videoElement.readyState>=2)x.drawImage(videoElement,0,0,c.width,c.height);requestAnimationFrame(d)}d()}
         
         let lastVideoTime = -1, lastActionTime = 0;
-        const COOLDOWN = 1000;
-
         async function predictWebcam(){
             if(aiEnabled && videoElement && videoElement.currentTime!==lastVideoTime && handLandmarker){
                 lastVideoTime=videoElement.currentTime; const r=handLandmarker.detectForVideo(videoElement,performance.now()); processGestures(r); document.getElementById('cam-status').classList.toggle('active',r.landmarks.length>0);
@@ -471,7 +597,6 @@
                 STATE.hand.x=(lm[9].x-0.5)*2; STATE.hand.y=(lm[9].y-0.5)*2;
                 
                 const wrist=lm[0], thumb=lm[4], index=lm[8], middleBase=lm[9], middleTip=lm[12];
-                
                 const pinchDist = Math.hypot(thumb.x-index.x, thumb.y-index.y); 
                 const openDist = Math.hypot(middleTip.x-wrist.x, middleTip.y-wrist.y);
                 const handBoxSize = Math.hypot(middleBase.x-wrist.x, middleBase.y-wrist.y);
@@ -479,36 +604,31 @@
                 const isFist = openDist < 0.15;
                 const isPinch = pinchDist < 0.05 && openDist > 0.15;
                 const isOpen = openDist > 0.25 && handBoxSize <= 0.2;
-                const isPush = openDist > 0.25 && handBoxSize > 0.25; // Tay to ra do đẩy lại gần cam
+                const isPush = openDist > 0.25 && handBoxSize > 0.25; 
                 
                 const now = performance.now();
-                const canAct = (now - lastActionTime > COOLDOWN);
+                const canAct = (now - lastActionTime > 1000);
 
                 if (isFist) {
-                    if (STATE.isVideoPlaying) { if(canAct) { closeVideo(); lastActionTime = now; } } 
-                    else setMode('TREE');
-                } 
-                else if (STATE.isVideoPlaying) return; // Đang xem phim thì không nhận diện loạn
-                else if (isPush) {
+                    if (STATE.mode === 'FOCUS') { setMode('TREE'); lastActionTime = now; }
+                } else if (isPush) {
                     if (STATE.mode === 'FOCUS' && canAct) {
                         const pData = photoMeshes.find(p => p.mesh === STATE.focusTarget);
-                        if (pData && pData.ytId) { openVideo(pData.ytId); lastActionTime = now; }
+                        if (pData && pData.isVideo) { if(pData.videoEl.paused) {pData.videoEl.play(); activeVideoEl = pData.videoEl;} else {pData.videoEl.pause(); activeVideoEl = null;} } 
+                        else focusNextPhoto();
+                        lastActionTime = now;
                     }
-                }
-                else if (isPinch) {
+                } else if (isPinch) {
                     if (STATE.mode !== 'FOCUS' && canAct) { triggerPhotoGrab(); lastActionTime = now; }
-                }
-                else if (isOpen) {
-                    if (STATE.mode === 'FOCUS' && canAct) {
-                        // Vẫy tay xa trái/phải để chuyển ảnh
-                        if (STATE.hand.x > 0.6) { focusPrevPhoto(); lastActionTime = now; }
-                        else if (STATE.hand.x < -0.6) { focusNextPhoto(); lastActionTime = now; }
-                    } else if (STATE.mode !== 'FOCUS') {
-                        setMode('SCATTER');
-                        // Xoay toàn cảnh
-                        const th=0.3, s=CONFIG.interaction.rotationSpeed;
-                        if(STATE.hand.x>th) STATE.rotation.y -= s*0.016*(STATE.hand.x-th);
-                        else if(STATE.hand.x<-th) STATE.rotation.y -= s*0.016*(STATE.hand.x+th);
+                } else if (isOpen) {
+                    if (STATE.mode === 'FOCUS') {
+                       if (STATE.hand.x > 0.6 && canAct) { focusPrevPhoto(); lastActionTime = now; }
+                       if (STATE.hand.x < -0.6 && canAct) { focusNextPhoto(); lastActionTime = now; }
+                    } else {
+                       setMode('SCATTER');
+                       const th=0.3, s=CONFIG.interaction.rotationSpeed;
+                       if(STATE.hand.x>th) STATE.rotation.y -= s*0.016*(STATE.hand.x-th);
+                       else if(STATE.hand.x<-th) STATE.rotation.y -= s*0.016*(STATE.hand.x+th);
                     }
                 }
             } else STATE.hand.detected=false;
@@ -516,27 +636,53 @@
 
         window.setupEvents=()=>{
             window.addEventListener('resize',()=>{camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);composer.setSize(window.innerWidth,window.innerHeight)});
-            document.getElementById('music-input').addEventListener('change',e=>{const f=e.target.files[0];if(f){bgmAudio.src=URL.createObjectURL(f);bgmAudio.play().then(()=>{isMusicPlaying=true; document.getElementById('play-btn').innerText="⏸"}).catch(console.error)}});
+            document.getElementById('music-input').addEventListener('change', async e=>{
+                const f=e.target.files[0]; if(f){ saveMusicToDB(f); bgmAudio.src=URL.createObjectURL(f); bgmAudio.play().then(()=>{isMusicPlaying=true; document.getElementById('play-btn').innerText="⏸"}).catch(console.error)}
+            });
+            document.getElementById('file-input').addEventListener('change', async e => {
+                for(let f of e.target.files) {
+                    let isVid = f.type.startsWith('video/');
+                    let msg = prompt("Nhập lời chúc đính kèm ảnh/video này (để trống nếu không muốn):", "");
+                    let id = await saveMediaToDB(f, isVid, msg);
+                    let url = URL.createObjectURL(f);
+                    createMediaTexture(url, id, isVid, msg);
+                }
+            });
         }
+
+        window.openDeleteManager=async()=>{
+            document.getElementById('delete-manager').classList.remove('hidden'); const g=document.getElementById('photo-grid'); g.innerHTML='';
+            const ps=await loadMediaFromDB();
+            if(!ps||ps.length===0) g.innerHTML='<div style="color:#888;">Chưa có dữ liệu</div>';
+            else ps.forEach(p=>{
+                const d=document.createElement('div'); d.className='photo-item';
+                let tag;
+                if(p.isVideo) { tag = document.createElement('video'); tag.src = URL.createObjectURL(p.blob); tag.muted=true; tag.autoplay=true; tag.loop=true; }
+                else { tag = document.createElement('img'); tag.src = URL.createObjectURL(p.blob); }
+                tag.className='photo-thumb';
+                const b=document.createElement('div'); b.className='delete-x'; b.innerText='X';
+                b.onclick=e=>{e.stopPropagation();confirmDelete(p.id,d)};
+                d.appendChild(tag); d.appendChild(b); g.appendChild(d);
+            });
+        }
+        window.confirmDelete=(id,el)=>{deleteMediaFromDB(id);el.remove();const p=particleSystem.find(pa=>pa.mediaId===id);if(p){photoMeshGroup.remove(p.mesh);particleSystem.splice(particleSystem.indexOf(p),1);photoMeshes.splice(photoMeshes.indexOf(p),1)}}
+        window.clearAllPhotos=()=>{if(confirm("Xóa toàn bộ nội dung?")){clearMediaDB();photoMeshes.forEach(p=>photoMeshGroup.remove(p.mesh));particleSystem=particleSystem.filter(p=>p.type!=='PHOTO');photoMeshes=[];window.openDeleteManager()}}
+        window.closeDeleteManager=()=>{document.getElementById('delete-manager').classList.add('hidden')}
 
         function animate() {
             requestAnimationFrame(animate); const dt=clock.getDelta(); const et=clock.getElapsedTime();
-            if(snowInstancedMesh&&STATE.mode==='TREE'){
-                snowInstancedMesh.visible=true;
-                for(let i=0;i<CONFIG.snow.count;i++){
-                    snowInstancedMesh.getMatrixAt(i,snowDummy.matrix);snowDummy.matrix.decompose(snowDummy.position,snowDummy.quaternion,snowDummy.scale);const d=snowData[i];
-                    snowDummy.position.y-=d.vy*CONFIG.snow.speed*dt;snowDummy.position.x+=Math.sin(et*0.5+i)*2.5*dt;snowDummy.position.z+=Math.cos(et*0.3+i)*1.5*dt;
-                    snowDummy.rotation.x+=d.rx*dt;snowDummy.rotation.y+=d.ry*dt;snowDummy.rotation.z+=d.rz*dt;
-                    if(snowDummy.position.y<-25){snowDummy.position.y=40;snowDummy.position.x=(Math.random()-0.5)*CONFIG.snow.range;snowDummy.position.z=(Math.random()-0.5)*CONFIG.snow.range;}
-                    snowDummy.updateMatrix();snowInstancedMesh.setMatrixAt(i,snowDummy.matrix);
-                } snowInstancedMesh.instanceMatrix.needsUpdate=true;
-            } else if(snowInstancedMesh)snowInstancedMesh.visible=false;
+            
+            // Chuyển động bụi
+            dustSystem.forEach(p => {
+                p.mesh.position.y += Math.sin(et + p.mesh.id) * 0.5 * dt;
+                p.mesh.position.x += Math.cos(et + p.mesh.id) * 0.5 * dt;
+                p.mesh.scale.setScalar(0.5 + 0.3*Math.sin(et*2 + p.mesh.id));
+            });
 
-            // Xoay 3D mặc định
             if(STATE.mode==='TREE'){STATE.rotation.y+=0.3*dt;STATE.rotation.x+=(0-STATE.rotation.x)*2.0*dt;}
             else if (STATE.mode !== 'FOCUS') {STATE.rotation.y+=0.1*dt;}
             
-            mainGroup.rotation.y=STATE.rotation.y;mainGroup.rotation.x=STATE.rotation.x;
+            mainGroup.rotation.y=STATE.rotation.y; mainGroup.rotation.x=STATE.rotation.x;
             particleSystem.forEach(p=>p.update(dt,STATE.mode,STATE.focusTarget));
             composer.render();
         }
