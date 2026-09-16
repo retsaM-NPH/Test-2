@@ -2,45 +2,42 @@
 <html lang="vi-VN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kỷ Yếu Trái Tim 3D</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cây Thông Giáng Sinh 3D - Phiên bản Tiếng Việt</title>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #fdf5f6; font-family: 'Microsoft YaHei', 'Songti SC', serif; touch-action: none; }
+        body { margin: 0; overflow: hidden; background-color: #050505; font-family: 'Microsoft YaHei', 'Songti SC', serif; }
         #canvas-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 1; }
         
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Great+Vibes&family=Monoton&family=Abril+Fatface&family=Ma+Shan+Zheng&display=swap');
 
         :root {
-            --glass-bg: rgba(255, 255, 255, 0.65);
-            --glass-border: rgba(255, 105, 180, 0.4);
-            --glass-highlight: rgba(255, 255, 255, 0.9);
-            --accent-gold: #ff1493;
-            --text-main: #333333;
-            --text-sub: #888888;
+            --glass-bg: rgba(20, 20, 25, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-highlight: rgba(255, 255, 255, 0.15);
+            --accent-gold: #d4af37;
+            --accent-gold-gradient: linear-gradient(135deg, #fceea7 0%, #d4af37 100%);
+            --text-main: #ffffff;
+            --text-sub: #b0b0b5;
             --panel-width: 210px;
             --ui-scale: 0.9; 
         }
 
-        @media screen and (max-width: 768px) { 
-            :root { --ui-scale: 0.85; }
-            #left-sidebar { width: 90vw !important; left: 5vw !important; top: 70px !important; height: 45vh !important; }
-            .bottom-left-panel { width: 90vw !important; left: 5vw !important; bottom: 10px !important; }
-            #webcam-wrapper { width: 100px !important; height: 75px !important; top: 15px !important; right: 15px !important; bottom: auto !important; }
-            #title-container { top: 5% !important; }
-            .title-line { font-size: 30px !important; }
-            #top-right-controls { top: 15px !important; right: 15px !important; flex-direction: row !important; } 
-            #gesture-hint { font-size: 11px !important; background: rgba(255,255,255,0.8); color: #ff1493 !important; padding: 5px; border-radius: 10px; box-shadow: 0 0 10px rgba(255,105,180,0.2); }
-        }
+        @media screen and (max-height: 800px) { :root { --ui-scale: 0.8; } }
+        @media screen and (min-width: 2000px) { :root { --ui-scale: 1.1; } }
+        :fullscreen { --ui-scale: 1.0; }
 
         .glass-panel {
-            background: var(--glass-bg); backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border-radius: 16px; border: 1px solid var(--glass-border);
-            box-shadow: 0 15px 35px rgba(255, 105, 180, 0.15), inset 1px 1px 0px var(--glass-highlight);
+            background: var(--glass-bg);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0.5px 0.5px 0px var(--glass-highlight), inset -0.5px -0.5px 0px rgba(0,0,0,0.5);
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
             box-sizing: border-box;
         }
 
-        #left-sidebar, .bottom-left-panel { transition: transform 0.4s ease, opacity 0.4s ease; }
+        #left-sidebar, .bottom-left-panel { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .panel-hidden { transform: translateX(calc(-1 * var(--panel-width) - 50px)) scale(var(--ui-scale)) !important; opacity: 0 !important; pointer-events: none !important; }
         .hidden { display: none !important; }
 
@@ -50,53 +47,70 @@
 
         .bottom-left-panel { position: absolute; bottom: 15px; left: 15px; pointer-events: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; width: var(--panel-width); padding: 10px; box-sizing: border-box; transform: scale(var(--ui-scale)); transform-origin: bottom left; }
         .bottom-left-panel .ui-title-main { grid-column: span 2; font-size: 11px; margin-bottom: 4px; padding-bottom: 2px; }
+        
         .bottom-left-panel .elegant-btn { width: 100%; font-size: 10px; height: 28px; position: relative; }
         .elegant-btn input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
 
-        .ui-title-main { font-family: 'SimSun', 'Songti SC', serif; font-size: 14px; font-weight: bold; color: #ff1493; text-shadow: 0 0 10px rgba(255, 20, 147, 0.2); border-bottom: 1px solid rgba(255, 105, 180, 0.3); padding-bottom: 4px; margin-bottom: 6px; letter-spacing: 2px; text-align: center; }
-        .ui-title-sub { font-size: 12px; color: var(--text-sub); margin-top: 6px; margin-bottom: 3px; letter-spacing: 1px; font-weight: 700; text-transform: uppercase; }
-        .control-label { color: #555; font-size: 11px; font-weight: 700; }
+        .ui-title-main { font-family: 'SimSun', 'Songti SC', serif; font-size: 14px; font-weight: bold; color: #fff1c1; text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding-bottom: 4px; margin-bottom: 6px; letter-spacing: 2px; text-align: center; }
+        .ui-title-sub { font-size: 12px; color: #b0b0b5; margin-top: 6px; margin-bottom: 3px; letter-spacing: 1px; font-weight: 700; text-transform: uppercase; }
+        .control-label { color: #aaa; font-size: 11px; font-weight: 700; }
+        .control-group { display: flex; flex-direction: column; gap: 2px; margin-bottom: 5px; }
         .control-row { display: flex; flex-direction: column; gap: 1px; margin-bottom: 4px; }
 
-        .particle-scroll-container { max-height: 140px; overflow-y: auto; padding-right: 4px; margin-right: -4px; border-left: 2px solid rgba(255,105,180,0.2); padding-left: 6px; }
-        
-        .elegant-btn { background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(255, 105, 180, 0.5); color: #ff1493; padding: 5px 0; cursor: pointer; text-transform: uppercase; font-size: 10px; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-weight: bold; }
-        .elegant-btn:hover { background: rgba(255, 105, 180, 0.15); color: #c71585; border-color: #ff1493; box-shadow: 0 0 10px rgba(255, 105, 180, 0.3); }
+        .particle-scroll-container { max-height: 140px; overflow-y: auto; padding-right: 4px; margin-right: -4px; border-left: 2px solid rgba(212,175,55,0.1); padding-left: 6px; }
+        .particle-scroll-container::-webkit-scrollbar { width: 3px; }
+        .particle-scroll-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 2px; }
+        .particle-scroll-container::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.4); border-radius: 2px; }
+
+        .elegant-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(212, 175, 55, 0.3); color: #d4af37; padding: 5px 0; cursor: pointer; text-transform: uppercase; font-size: 10px; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; border-radius: 4px; box-sizing: border-box; position: relative; overflow: hidden; font-family: 'Microsoft YaHei', sans-serif; text-decoration: none; }
+        .elegant-btn:hover { background: rgba(212, 175, 55, 0.1); border-color: #fff1c1; color: #fff; box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); text-shadow: 0 0 5px rgba(255, 255, 255, 0.8); }
         .elegant-btn:active { transform: scale(0.98); }
-        .btn-red { border-color: #ff6347; color: #d32f2f; }
+        .btn-red { border-color: #844; color: #eaa; }
+        .btn-red:hover { background: #522; box-shadow: 0 0 15px rgba(255, 50, 50, 0.3); }
 
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin: 3px 0; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 3px; background: rgba(255, 105, 180, 0.2); border-radius: 2px; }
-        input[type=range]::-webkit-slider-thumb { height: 12px; width: 12px; border-radius: 50%; background: #ff1493; -webkit-appearance: none; margin-top: -4.5px; box-shadow: 0 0 5px rgba(255, 20, 147, 0.5); cursor: pointer; }
-        .input-glass { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(255, 105, 180, 0.3); color: #c71585; padding: 3px; font-size: 10px; border-radius: 4px; width: 100%; text-align: center; height: 24px; outline: none; font-weight: bold; }
-        
+        input[type=range]:focus { outline: none; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 1px; cursor: pointer; background: rgba(255, 255, 255, 0.2); border-radius: 1px; }
+        input[type=range]::-webkit-slider-thumb { height: 9px; width: 9px; border-radius: 50%; background: #d4af37; cursor: pointer; -webkit-appearance: none; margin-top: -4px; box-shadow: 0 0 5px rgba(212, 175, 55, 0.8); border: 1px solid #000; transition: transform 0.1s; }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); background: #fff; }
+
+        .input-glass { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); color: #eebb66; padding: 3px; font-size: 10px; outline: none; transition: 0.3s; border-radius: 2px; width: 100%; box-sizing: border-box; text-align: center; height: 24px; }
+        .input-glass:focus { border-color: #d4af37; background: rgba(0,0,0,0.6); }
+        select.input-glass { cursor: pointer; }
+        select.input-glass option { background: #000; color: #d4af37; }
+        input[type="color"] { -webkit-appearance: none; border: none; width: 100%; height: 16px; cursor: pointer; padding: 0; background: none; }
+
         #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
-        #title-container { position: absolute; top: 10%; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: auto; cursor: move; z-index: 50; padding: 10px; }
-        .title-line { margin: 0; white-space: nowrap; color: #ff69b4; text-shadow: 0 0 20px rgba(255, 105, 180, 0.6); }
-        
+        #title-container { position: absolute; top: 10%; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: auto; cursor: move; z-index: 50; transition: color 0.2s; user-select: none; padding: 10px; }
+        .title-line { margin: 0; transition: all 0.2s ease; white-space: nowrap; color: #fceea7; text-shadow: 0 0 30px rgba(255, 255, 255, 0.2); }
         .top-left-panel { pointer-events: auto; display: flex; flex-direction: column; gap: 4px; padding: 10px; width: 100%; box-sizing: border-box; }
         .interaction-grid { display: flex; gap: 4px; margin-bottom: 4px; }
+        .direction-pad { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px; margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .dir-btn { background: rgba(255,255,255,0.03); border: 1px solid rgba(212,175,55,0.2); color: #d4af37; text-align: center; cursor: pointer; padding: 5px 0; border-radius: 2px; font-size: 11px; user-select: none; transition: 0.2s; }
+        .dir-btn:hover { background: rgba(212,175,55,0.2); color: #fff; box-shadow: 0 0 8px rgba(212,175,55,0.2); }
+        .dir-btn:active { background: #d4af37; color: #000; }
         
         #top-right-controls { position: absolute; top: 15px; right: 15px; pointer-events: auto; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; z-index: 50; }
-        #webcam-wrapper { position: absolute; bottom: 15px; right: 15px; width: 160px; height: 120px; border: 2px solid #ffb6c1; border-radius: 8px; box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3); overflow: hidden; z-index: 20; background: #fff; transition: 0.4s; pointer-events: auto; }
-        #webcam-wrapper.camera-hidden { opacity: 0; pointer-events: none; transform: translateY(20px); }
+        #webcam-wrapper { position: absolute; bottom: 15px; right: 15px; width: 160px; height: 120px; border: 1px solid rgba(212, 175, 55, 0.5); border-radius: 4px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.9); overflow: hidden; z-index: 20; pointer-events: auto; background: #000; transition: opacity 0.4s ease, transform 0.4s ease; }
+        #webcam-wrapper.camera-hidden { opacity: 0; pointer-events: none; transform: translateY(10px); }
         #webcam-canvas { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); display: block; }
-        #cam-status { position: absolute; bottom: 5px; right: 5px; width: 8px; height: 8px; background: #999; border-radius: 50%; box-shadow: 0 0 4px #000; z-index: 30; }
-        #cam-status.active { background: #00ff00; box-shadow: 0 0 8px #00ff00; }
+        #cam-status { position: absolute; bottom: 5px; right: 5px; width: 6px; height: 6px; background: #550000; border-radius: 50%; box-shadow: 0 0 4px #ff0000; z-index: 30; transition: 0.2s; }
+        #cam-status.active { background: #00ff00; box-shadow: 0 0 6px #00ff00; }
         
-        #delete-manager { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 60; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: auto; backdrop-filter: blur(10px); }
-        #photo-grid { display: flex; flex-wrap: wrap; gap: 15px; width: 70%; height: 60%; overflow-y: auto; justify-content: center; padding: 20px; border: 1px solid rgba(255,105,180,0.3); margin: 20px 0; background: rgba(255,240,245,0.8); border-radius: 12px; }
-        .photo-item { width: 80px; height: 80px; position: relative; border: 2px solid #ff69b4; cursor: pointer; border-radius: 6px; overflow: hidden; }
+        #delete-manager { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 60; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: auto; backdrop-filter: blur(10px); }
+        #photo-grid { display: flex; flex-wrap: wrap; gap: 15px; width: 70%; height: 60%; overflow-y: auto; justify-content: center; padding: 20px; border: 1px solid rgba(212,175,55,0.3); margin: 20px 0; background: rgba(0,0,0,0.5); border-radius: 8px; }
+        .photo-item { width: 80px; height: 80px; position: relative; border: 1px solid #d4af37; transition: 0.2s; cursor: pointer; }
+        .photo-item:hover { transform: scale(1.1); border-color: #fff; box-shadow: 0 0 15px rgba(212,175,55,0.5); }
         .photo-thumb { width: 100%; height: 100%; object-fit: cover; }
-        .delete-x { position: absolute; top: -5px; right: -5px; width: 22px; height: 22px; background: #ff4d4d; color: white; border-radius: 50%; text-align: center; line-height: 22px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
-        .manager-title { color: #ff1493; font-size: 24px; letter-spacing: 2px; font-weight: bold; }
+        .delete-x { position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; background: #900; color: white; border-radius: 50%; text-align: center; line-height: 18px; font-size: 12px; cursor: pointer; font-weight: bold; border: 1px solid #fff; }
+        .manager-title { color: #d4af37; font-size: 20px; font-family: 'Microsoft YaHei', serif; letter-spacing: 2px; }
         
-        #loader { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #fdf5f6; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease-out; }
-        .spinner { width: 60px; height: 60px; border: 3px solid rgba(255, 105, 180, 0.2); border-top: 3px solid #ff1493; border-radius: 50%; animation: spin 1s infinite linear; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        .loader-text { color: #ff1493; font-size: 14px; letter-spacing: 4px; margin-top: 25px; font-weight: bold; }
+        #loader { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #050505; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease-out; }
+        .spinner { width: 50px; height: 50px; border: 1px solid rgba(212, 175, 55, 0.1); border-top: 2px solid #d4af37; border-radius: 50%; animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loader-text { color: #d4af37; font-size: 12px; letter-spacing: 4px; margin-top: 25px; font-family: 'Cinzel', serif; opacity: 0.8; }
         
-        #gesture-hint { position: absolute; bottom: 10px; width: 100%; text-align: center; color: #ff69b4; font-size: 13px; font-weight: bold; pointer-events: none; z-index: 5; text-shadow: 0 1px 3px rgba(255,255,255,0.8); }
+        #gesture-hint { position: absolute; bottom: 10px; width: 100%; text-align: center; color: rgba(212,175,55,0.7); font-size: 10px; pointer-events: none; text-shadow: 0 0 5px #000; z-index: 5; }
     </style>
     <script type="importmap">
         { 
@@ -109,79 +123,124 @@
     </script>
 </head>
 <body>
-    <div id="loader"><div class="spinner"></div><div class="loader-text">ĐANG TẢI DỮ LIỆU...</div></div>
-    
-    <div id="canvas-container"></div>
-    
-    <div id="title-container">
-        <h1 id="display-line1" class="title-line">Sweet</h1>
-        <h1 id="display-line2" class="title-line">Memories</h1>
+    <div id="loader">
+        <div class="spinner"></div>
+        <div class="loader-text">ĐANG KHỞI TẠO HỆ THỐNG</div>
     </div>
-
+    <div id="canvas-container"></div>
+    <div id="title-container">
+        <h1 id="display-line1" class="title-line">Merry</h1>
+        <h1 id="display-line2" class="title-line">Christmas</h1>
+    </div>
     <div id="ui-layer">
         <div id="top-right-controls">
             <button class="elegant-btn glass-panel" id="fs-btn" onclick="toggleFullScreen()" style="padding: 6px 12px;">⛶ Toàn màn hình</button>
-            <button class="elegant-btn glass-panel" id="toggle-ui-btn" onclick="toggleUI()" style="padding: 6px 12px;">👁 Ẩn/Hiện UI</button>
+            <button class="elegant-btn glass-panel" id="toggle-ui-btn" onclick="toggleUI()" style="padding: 6px 12px;">👁 Ẩn giao diện</button>
         </div>
         <div id="left-sidebar">
             <div class="top-left-panel glass-panel">
                 <div class="ui-title-main">TÙY CHỈNH CẢNH</div> 
+                <div class="ui-title-sub">Lời chúc</div>
                 <div class="control-row">
                     <input type="text" id="input-line1" class="input-glass" placeholder="Dòng chữ thứ nhất" oninput="updateTextConfig()">
-                    <input type="text" id="input-line2" class="input-glass" placeholder="Dòng chữ thứ hai" oninput="updateTextConfig()">
+                    <input type="text" id="input-line2" class="input-glass" placeholder="Dòng chữ thứ hai" oninput="updateTextConfig()" style="margin-top:2px;">
                 </div>
-                <select id="font-select" class="input-glass" onchange="updateTextConfig()" style="margin-top: 5px;">
-                    <option value="style1">Thư pháp</option><option value="style2">Cổ điển</option>
-                    <option value="style3">Viết tay</option><option value="style4">Nghệ thuật</option>
+                <div class="ui-title-sub">Phong cách chữ</div>
+                <select id="font-select" class="input-glass" onchange="updateTextConfig()">
+                    <option value="style1">Thư pháp</option>
+                    <option value="style2">Cổ điển</option>
+                    <option value="style3">Viết tay</option>
+                    <option value="style4">Nghệ thuật</option>
+                    <option value="style5">Đậm nét vintage</option>
                 </select>
                 <div class="control-row">
-                    <div style="display:flex; gap:8px; align-items:center; margin-top: 5px;">
+                    <div class="ui-title-sub" style="margin-top:6px;">Kích thước & Màu sắc</div>
+                    <div style="display:flex; gap:8px; align-items:center;">
                         <input type="range" min="50" max="250" value="100" id="slider-fontsize" oninput="updateTextConfig()">
-                        <input type="color" id="color-picker" value="#ff69b4" oninput="updateTextConfig()" style="width:30px; height:20px; border:none; padding: 0;">
+                        <input type="color" id="color-picker" value="#fceea7" oninput="updateTextConfig()" style="width:30px; height:20px; border:none;">
                     </div>
                 </div>
-                <div class="ui-title-sub" style="border-top:1px solid rgba(255,105,180,0.2); padding-top:6px; margin-top:6px;">Nhạc nền</div>
+                <div class="ui-title-sub" style="border-top:1px solid rgba(255,255,255,0.05); padding-top:6px; margin-top:6px;">Nhạc nền</div>
                 <div style="display:flex; gap:8px; margin-bottom:4px;">
-                    <button class="elegant-btn" onclick="toggleMusicPlay()" id="play-btn" style="flex:2;">⏯</button>
-                    <button class="elegant-btn" onclick="replayMusic()" style="flex:1;">⟲</button>
+                    <button class="elegant-btn" onclick="toggleMusicPlay()" id="play-btn" style="flex:2; font-size:14px;">⏯</button>
+                    <button class="elegant-btn" onclick="replayMusic()" style="flex:1; font-size:14px;">⟲</button>
                 </div>
-                <input type="range" min="0" max="100" value="50" id="slider-volume" oninput="updateVolume(this.value)">
-                
-                <div class="ui-title-sub" style="border-top:1px solid rgba(255,105,180,0.2); padding-top:6px; margin-top:6px;">Hiệu ứng hạt</div>
+                <div class="control-row">
+                    <span class="control-label" style="text-align:center;">Âm lượng</span>
+                    <input type="range" min="0" max="100" value="50" id="slider-volume" oninput="updateVolume(this.value)">
+                </div>
+                <div class="ui-title-sub" style="border-top:1px solid rgba(255,255,255,0.05); padding-top:6px; margin-top:6px;">Điều khiển hạt sáng</div>
                 <div class="particle-scroll-container">
-                    <span class="control-label">Mật độ hạt tim</span><input type="range" min="300" max="2000" value="1200" id="slider-tree">
-                    <span class="control-label">Bụi hồng phấn</span><input type="range" min="500" max="3000" value="2000" id="slider-dust">
+                    <div class="control-row">
+                        <span class="control-label">Mật độ hạt (Cây)</span>
+                        <input type="range" min="500" max="3000" value="1500" id="slider-tree">
+                    </div>
+                    <div class="control-row">
+                        <span class="control-label">Mật độ sao (Nền)</span>
+                        <input type="range" min="500" max="5000" value="2500" id="slider-dust">
+                    </div>
+                    <div class="control-row">
+                        <span class="control-label">Số lượng tuyết</span>
+                        <input type="range" min="0" max="3000" step="100" value="1500" id="slider-snow-count" onchange="updateSnowSettings()">
+                    </div>
+                    <div class="control-row">
+                        <span class="control-label">Kích thước tuyết</span>
+                        <input type="range" min="0.05" max="0.3" step="0.01" value="0.12" id="slider-snow-size" onchange="updateSnowSettings()">
+                    </div>
+                    <div class="control-row">
+                        <span class="control-label">Tốc độ rơi</span>
+                        <input type="range" min="1.0" max="8.0" step="0.5" value="3.5" id="slider-snow-speed" oninput="updateSnowSpeed(this.value)">
+                    </div>
                 </div>
-                <button class="elegant-btn" style="width:100%; margin-top:8px;" onclick="applyParticleSettings()">⚡ Cập nhật</button>
+                <button class="elegant-btn" style="width:100%; margin-top:8px;" onclick="applyParticleSettings()">⚡ Khôi phục mặc định</button>
             </div>
-            
             <div class="top-left-panel glass-panel">
-                <div class="ui-title-main">TƯƠNG TÁC TAY</div>
+                <div class="ui-title-main">ĐIỀU KHIỂN TƯƠNG TÁC</div>
+                <div class="ui-title-sub">Chuyển đổi trạng thái</div>
                 <div class="interaction-grid">
-                    <button class="elegant-btn" style="flex:1;" onclick="setMode('TREE')">Gom tim</button>
-                    <button class="elegant-btn" style="flex:1;" onclick="setMode('SCATTER')">Phân tán</button>
+                    <button class="elegant-btn" style="flex:1;" onclick="setMode('TREE')">Gom lại (Space)</button>
+                    <button class="elegant-btn" style="flex:1;" onclick="setMode('SCATTER')">Phân tán (Z)</button>
                 </div>
-                <button class="elegant-btn" style="width:100%;" onclick="triggerPhotoGrab()">Bắt ảnh / Xem</button>
+                <button class="elegant-btn" style="width:100%;" onclick="triggerPhotoGrab()">Bắt ảnh (X)</button>
+                <div class="control-row" style="margin-top:8px;">
+                    <span class="control-label">Tốc độ xoay (Phân tán)</span>
+                    <input type="range" min="0.1" max="5.0" step="0.1" value="1.4" oninput="updateRotationSpeed(this.value)">
+                </div>
+                <div class="direction-pad">
+                    <div></div>
+                    <div class="dir-btn" onmousedown="startRotate('up')" onmouseup="stopRotate()" onmouseleave="stopRotate()">▲</div>
+                    <div></div>
+                    <div class="dir-btn" onmousedown="startRotate('left')" onmouseup="stopRotate()" onmouseleave="stopRotate()">◀</div>
+                    <div class="dir-btn" onclick="resetRotation()" style="font-size:10px;">●</div>
+                    <div class="dir-btn" onmousedown="startRotate('right')" onmouseup="stopRotate()" onmouseleave="stopRotate()">▶</div>
+                    <div></div>
+                    <div class="dir-btn" onmousedown="startRotate('down')" onmouseup="stopRotate()" onmouseleave="stopRotate()">▼</div>
+                    <div></div>
+                </div>
             </div>
         </div>
-        
         <div class="bottom-left-panel glass-panel">
-            <div class="ui-title-main">THÊM DỮ LIỆU CỦA BẠN</div>
-            <!-- Chấp nhận cả ảnh và video nội bộ -->
-            <label class="elegant-btn"> + Thêm Ảnh / Video <input type="file" id="file-input" multiple accept="image/*,video/mp4,video/quicktime"> </label>
-            <button class="elegant-btn" onclick="openDeleteManager()">▣ Quản lý Bộ nhớ</button>
-            <label class="elegant-btn"> ♫ Tải nhạc nền <input type="file" id="music-input" accept=".mp3,audio/mpeg"> </label>
-            <button class="elegant-btn btn-red" id="toggle-cam-btn" onclick="toggleCameraDisplay()" style="margin-top: 5px;">📸 Bật/Tắt AI Camera</button>
+            <div class="ui-title-main" style="font-size:12px; margin-bottom:5px;">QUẢN LÝ DỮ LIỆU</div>
+            <label class="elegant-btn"> + Tải ảnh lên <input type="file" id="file-input" multiple accept="image/*"> </label>
+            <button class="elegant-btn" onclick="openDeleteManager()">▣ Quản lý ảnh</button>
+            <label class="elegant-btn" id="music-upload-label"> ♫ Tải nhạc nền <input type="file" id="music-input" accept=".mp3,audio/mpeg"> </label>
+            <button class="elegant-btn" id="toggle-cam-btn" onclick="toggleCameraDisplay()">📷 Ẩn camera</button>
         </div>
     </div>
-    
-    <div id="gesture-hint">Vuốt chạm để xoay | Chạm để Xem ảnh/Phát Video | Cử chỉ: Nắm tay (Gom), Mở tay (Phân tán), Đẩy (Video/Tiếp)</div>
-    
+    <div id="gesture-hint">Đang khởi tạo hệ thống camera...</div>
     <div id="webcam-wrapper">
         <canvas id="webcam-canvas" width="320" height="240"></canvas>
         <div id="cam-status"></div>
     </div>
     <video id="webcam-video" autoplay playsinline muted style="display:none"></video>
+    <div id="delete-manager" class="hidden">
+        <div class="manager-title">Quản lý Thư viện Ảnh</div>
+        <div id="photo-grid"></div>
+        <div class="manager-actions">
+            <button class="elegant-btn btn-red glass-panel" onclick="clearAllPhotos()" style="padding: 8px 20px;">Xóa tất cả</button>
+            <button class="elegant-btn glass-panel" onclick="closeDeleteManager()" style="padding: 8px 20px;">Đóng</button>
+        </div>
+    </div>
 
     <script type="module">
         import * as THREE from 'three';
@@ -191,50 +250,204 @@
         import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'; 
         import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision';
 
-        // Đổi tên DB để reset database chứa File/Blob thực tế
-        const DB_NAME = "HeartTreeDB_v1"; 
+        const DB_NAME = "GrandTreeDB_v17_Clean"; 
+        const EXPORTED_DATA = null;
 
         let CONFIG = {
-            colors: { 
-                bg: 0xfdf5f6, // Trắng hồng
-                pinkHot: 0xff69b4, 
-                pinkLight: 0xffb6c1, 
-                pinkDeep: 0xff1493,
-                whiteGlow: 0xffffff
-            },
-            particles: { count: window.innerWidth < 768 ? 600 : 1200, dustCount: window.innerWidth < 768 ? 1000 : 2000 },
-            camera: { z: 55 },
-            interaction: { rotationSpeed: 1.4 }
+            colors: { bg: 0x000000, champagneGold: 0xffd966, deepGreen: 0x03180a, accentRed: 0x990000 },
+            particles: { count: 1500, dustCount: 2500, treeHeight: 24, treeRadius: 8 },
+            snow: { count: 1500, range: 70, speed: 3.5, sizeBase: 0.12, sizeVar: 0.1 }, 
+            camera: { z: 50 },
+            interaction: { rotationSpeed: 1.4, grabRadius: 0.25 }
         };
 
         const STATE = { 
             mode: 'TREE', 
             focusTarget: null, 
-            focusIndex: -1,
+            focusType: 0, 
             hand: { detected: false, x: 0, y: 0 }, 
             rotation: { x: 0, y: 0 }, 
             uiVisible: true, 
-            cameraVisible: true
+            cameraVisible: true 
         };
 
-        let aiEnabled = true;
+        let manualRotateState = { x: 0, y: 0 };
 
         const FONT_STYLES = { 
-            'style1': { font: "'Ma Shan Zheng', cursive", spacing: "4px", shadow: "2px 2px 8px rgba(255,105,180,0.5)" }, 
-            'style2': { font: "'Cinzel', serif", spacing: "6px", shadow: "0 0 20px rgba(255,105,180,0.3)" }, 
-            'style3': { font: "'Great Vibes', cursive", spacing: "1px", shadow: "0 0 15px rgba(255,20,147,0.5)" }, 
-            'style4': { font: "'Monoton', cursive", spacing: "1px", shadow: "0 0 10px #ff69b4" }
+            'style1': { font: "'Ma Shan Zheng', cursive", spacing: "4px", shadow: "2px 2px 8px rgba(180,50,50,0.8)", transform: "none" }, 
+            'style2': { font: "'Cinzel', serif", spacing: "6px", shadow: "0 0 20px rgba(255,215,0,0.5)", transform: "none" }, 
+            'style3': { font: "'Great Vibes', cursive", spacing: "1px", shadow: "0 0 15px rgba(255,200,255,0.7)", transform: "none" }, 
+            'style4': { font: "'Monoton', cursive", spacing: "1px", shadow: "0 0 10px #fff", transform: "none" }, 
+            'style5': { font: "'Abril Fatface', cursive", spacing: "0px", shadow: "0 5px 15px rgba(0,0,0,0.8)", transform: "none" } 
         };
 
-        let db, scene, camera, renderer, composer, mainGroup;
-        let particleSystem = [], photoMeshes = [], photoMeshGroup = new THREE.Group();
-        let dustSystem = [];
+        let db;
+        let scene, camera, renderer, composer, mainGroup;
+        let particleSystem = [];
+        let photoMeshGroup = new THREE.Group();
+        let snowInstancedMesh, snowDummy = new THREE.Object3D(), snowData = [];
         let clock = new THREE.Clock();
         let handLandmarker, videoElement;
-        let bgmAudio = new Audio(); bgmAudio.loop = true; let isMusicPlaying = false;
-        
-        // Quản lý video local đang phát
-        let activeVideoEl = null; 
+        let caneTexture;
+        let bgmAudio = new Audio();
+        bgmAudio.loop = true;
+        let isMusicPlaying = false;
+
+        function initDB() { 
+            if(EXPORTED_DATA) return Promise.resolve(null); 
+            return new Promise(resolve => {
+                const request = indexedDB.open(DB_NAME, 1);
+                request.onupgradeneeded = event => {
+                    const database = event.target.result;
+                    if(!database.objectStoreNames.contains('photos')) {
+                        database.createObjectStore('photos', {keyPath: "id"});
+                    }
+                    if(!database.objectStoreNames.contains('music')) {
+                        database.createObjectStore('music', {keyPath: "id"});
+                    }
+                };
+                request.onsuccess = event => {
+                    db = event.target.result;
+                    resolve(db);
+                };
+                request.onerror = () => resolve(null);
+            });
+        }
+
+        function savePhotoToDB(base64Data) {
+            if(!db) return null;
+            const transaction = db.transaction('photos', "readwrite");
+            const id = Date.now() + Math.random().toString();
+            transaction.objectStore('photos').add({id: id, data: base64Data});
+            return id;
+        }
+
+        function loadPhotosFromDB() {
+            if(EXPORTED_DATA) return Promise.resolve(EXPORTED_DATA.photos || []); 
+            if(!db) return Promise.resolve([]); 
+            return new Promise(resolve => {
+                db.transaction('photos', "readonly").objectStore('photos').getAll().onsuccess = event => {
+                    resolve(event.target.result);
+                };
+            });
+        }
+
+        function deletePhotoFromDB(id) {
+            if(db) db.transaction('photos', "readwrite").objectStore('photos').delete(id);
+        }
+
+        function clearPhotosDB() {
+            if(db) db.transaction('photos', "readwrite").objectStore('photos').clear();
+        }
+
+        function saveMusicToDB(musicBlob) {
+            if(!db) return;
+            const transaction = db.transaction('music', "readwrite");
+            transaction.objectStore('music').put({id: 'bgm', data: musicBlob});
+        }
+
+        function loadMusicFromDB() {
+            if(EXPORTED_DATA && EXPORTED_DATA.music) return Promise.resolve(dataURLtoBlob(EXPORTED_DATA.music)); 
+            if(!db) return Promise.resolve(null);
+            return new Promise(resolve => {
+                db.transaction('music', "readonly").objectStore('music').get('bgm').onsuccess = event => {
+                    resolve(event.target.result ? event.target.result.data : null);
+                };
+            });
+        }
+
+        function dataURLtoBlob(dataurl) { 
+            let arr = dataurl.split(',');
+            let mime = arr[0].match(/:(.*?);/)[1];
+            let bstr = atob(arr[1]);
+            let n = bstr.length;
+            let u8arr = new Uint8Array(n); 
+            while(n--) { 
+                u8arr[n] = bstr.charCodeAt(n); 
+            } 
+            return new Blob([u8arr], {type: mime}); 
+        }
+
+        async function init() {
+            if (EXPORTED_DATA) {
+                document.body.classList.add('exported-mode');
+                CONFIG = EXPORTED_DATA.config;
+                setTimeout(() => applyTextConfig(EXPORTED_DATA.text.fontKey, EXPORTED_DATA.text.line1, EXPORTED_DATA.text.line2, EXPORTED_DATA.text.size, EXPORTED_DATA.text.color), 100);
+            }
+
+            initThree(); 
+            setupEnvironment(); 
+            setupLights(); 
+            createTextures(); 
+            createParticles(); 
+            createDust(); 
+            createSnow(); 
+            createDefaultPhotos(); 
+            setupPostProcessing(); 
+            setupEvents(); 
+            animate();
+            
+            const loader = document.getElementById('loader');
+            if(loader) { 
+                loader.style.opacity = 0; 
+                setTimeout(() => loader.remove(), 500); 
+            }
+
+            try {
+                await initDB();
+                if(!EXPORTED_DATA) loadTextConfig();
+                
+                const loadedPhotos = await loadPhotosFromDB(); 
+                if(loadedPhotos?.length > 0) { 
+                    photoMeshGroup.clear(); 
+                    particleSystem = particleSystem.filter(p => p.type !== 'PHOTO'); 
+                    loadedPhotos.forEach(item => createPhotoTexture(item.data, item.id)); 
+                } 
+                
+                const loadedMusic = await loadMusicFromDB(); 
+                if(loadedMusic) { 
+                    bgmAudio.src = URL.createObjectURL(loadedMusic); 
+                    if(EXPORTED_DATA) { 
+                        document.body.addEventListener('click', () => { 
+                            if(!isMusicPlaying) toggleMusicPlay(); 
+                        }, { once: true }); 
+                    } 
+                    updatePlayBtnUI(false); 
+                } 
+            } catch(e) {
+                console.warn(e);
+            }
+            
+            initMediaPipe(); 
+            initDraggableTitle();
+            
+            setMode('TREE');
+        }
+
+        function initDraggableTitle() { 
+            const titleContainer = document.getElementById('title-container'); 
+            let isDragging = false;
+            let offset = {x: 0, y: 0}; 
+            
+            titleContainer.onmousedown = event => {
+                isDragging = true;
+                const rect = titleContainer.getBoundingClientRect();
+                offset.x = event.clientX - rect.left;
+                offset.y = event.clientY - rect.top;
+                titleContainer.style.transform = 'none';
+                titleContainer.style.left = rect.left + 'px';
+                titleContainer.style.top = rect.top + 'px';
+            }; 
+            
+            window.onmousemove = event => {
+                if(isDragging) {
+                    titleContainer.style.left = (event.clientX - offset.x) + 'px';
+                    titleContainer.style.top = (event.clientY - offset.y) + 'px';
+                }
+            }; 
+            
+            window.onmouseup = () => isDragging = false; 
+        }
 
         window.toggleUI = () => { 
             STATE.uiVisible = !STATE.uiVisible; 
@@ -244,448 +457,794 @@
 
         window.toggleCameraDisplay = () => { 
             STATE.cameraVisible = !STATE.cameraVisible; 
-            document.getElementById('webcam-wrapper').classList.toggle('camera-hidden', !STATE.cameraVisible);
-            aiEnabled = STATE.cameraVisible;
-            if(!aiEnabled && videoElement) videoElement.pause();
-            if(aiEnabled && videoElement) videoElement.play();
-        };
-        
-        window.toggleFullScreen = () => { if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); };
-        window.toggleMusicPlay = () => { if(!bgmAudio.src) return alert("Vui lòng tải nhạc lên trước"); if(isMusicPlaying){ bgmAudio.pause(); isMusicPlaying=false; } else { bgmAudio.play(); isMusicPlaying=true; } document.getElementById('play-btn').innerText = isMusicPlaying ? "⏸" : "⏯"; };
-        window.replayMusic = () => { if(!bgmAudio.src) return; bgmAudio.currentTime=0; bgmAudio.play(); isMusicPlaying=true; document.getElementById('play-btn').innerText="⏸"; };
-        window.updateVolume = (v) => { bgmAudio.volume = v/100; };
-        
-        window.setMode = (mode) => { 
-            STATE.mode = mode; 
-            STATE.focusTarget = null; 
-            if(activeVideoEl) { activeVideoEl.pause(); activeVideoEl = null; }
+            document.getElementById('webcam-wrapper').classList.toggle('camera-hidden', !STATE.cameraVisible); 
         };
 
-        window.triggerPhotoGrab = () => { 
-            if(photoMeshes.length === 0) return;
-            if(STATE.focusIndex === -1) STATE.focusIndex = 0;
-            setMode('FOCUS');
-            STATE.focusTarget = photoMeshes[STATE.focusIndex].mesh;
+        window.toggleFullScreen = () => { 
+            if(!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen(); 
+            }
         };
-
-        function focusNextPhoto() {
-            if(photoMeshes.length === 0) return;
-            if(activeVideoEl) { activeVideoEl.pause(); activeVideoEl = null; }
-            STATE.focusIndex = (STATE.focusIndex + 1) % photoMeshes.length;
-            STATE.focusTarget = photoMeshes[STATE.focusIndex].mesh;
-        }
-
-        function focusPrevPhoto() {
-            if(photoMeshes.length === 0) return;
-            if(activeVideoEl) { activeVideoEl.pause(); activeVideoEl = null; }
-            STATE.focusIndex = (STATE.focusIndex - 1 + photoMeshes.length) % photoMeshes.length;
-            STATE.focusTarget = photoMeshes[STATE.focusIndex].mesh;
-        }
 
         function loadTextConfig() { 
-            const s = JSON.parse(localStorage.getItem('v18_text_config')); 
-            if(s){ document.getElementById('input-line1').value=s.line1; document.getElementById('input-line2').value=s.line2; document.getElementById('font-select').value=s.fontKey; document.getElementById('slider-fontsize').value=s.size; document.getElementById('color-picker').value=s.color; applyTextConfig(s.fontKey,s.line1,s.line2,s.size,s.color); } 
-            else applyTextConfig("style3","Sweet","Memories",120,"#ff1493"); 
+            const savedConfig = JSON.parse(localStorage.getItem('v16_text_config')); 
+            if(savedConfig) { 
+                document.getElementById('input-line1').value = savedConfig.line1 || ""; 
+                document.getElementById('input-line2').value = savedConfig.line2 || ""; 
+                document.getElementById('font-select').value = savedConfig.fontKey || "style1"; 
+                document.getElementById('slider-fontsize').value = savedConfig.size || 100; 
+                document.getElementById('color-picker').value = savedConfig.color || "#fceea7"; 
+                applyTextConfig(savedConfig.fontKey, savedConfig.line1, savedConfig.line2, savedConfig.size, savedConfig.color); 
+            } else { 
+                document.getElementById('input-line1').value = "Merry"; 
+                document.getElementById('input-line2').value = "Christmas"; 
+                applyTextConfig("style1", "Merry", "Christmas", 100, "#fceea7"); 
+            } 
         }
-        window.updateTextConfig = () => { const k=document.getElementById('font-select').value, l1=document.getElementById('input-line1').value, l2=document.getElementById('input-line2').value, s=document.getElementById('slider-fontsize').value, c=document.getElementById('color-picker').value; localStorage.setItem('v18_text_config',JSON.stringify({fontKey:k,line1:l1,line2:l2,size:s,color:c})); applyTextConfig(k,l1,l2,s,c); };
-        function applyTextConfig(k,l1,l2,s,c) { const st=FONT_STYLES[k]||FONT_STYLES['style1']; const t1=document.getElementById('display-line1'), t2=document.getElementById('display-line2'), ct=document.getElementById('title-container'); ct.style.fontFamily=st.font; t1.innerText=l1; t2.innerText=l2; t1.style.letterSpacing=st.spacing; t2.style.letterSpacing=st.spacing; t1.style.textShadow=st.shadow; t2.style.textShadow=st.shadow; t1.style.color=c; t2.style.color=c; t1.style.fontSize=(0.48*s)+"px"; t2.style.fontSize=(0.48*s)+"px"; }
 
-        // --- KHỞI TẠO HỆ THỐNG ---
-        function init() {
-            if (window.innerWidth <= 768) {
-                window.toggleUI(); 
-                window.toggleCameraDisplay(); 
+        window.updateTextConfig = () => { 
+            const fontKey = document.getElementById('font-select').value;
+            const line1 = document.getElementById('input-line1').value;
+            const line2 = document.getElementById('input-line2').value;
+            const size = document.getElementById('slider-fontsize').value;
+            const color = document.getElementById('color-picker').value; 
+            
+            localStorage.setItem('v16_text_config', JSON.stringify({
+                fontKey: fontKey, 
+                line1: line1, 
+                line2: line2, 
+                size: size, 
+                color: color
+            })); 
+            
+            applyTextConfig(fontKey, line1, line2, size, color); 
+        };
+
+        function applyTextConfig(fontKey, line1, line2, size, color) { 
+            const style = FONT_STYLES[fontKey] || FONT_STYLES['style1']; 
+            const textEl1 = document.getElementById('display-line1');
+            const textEl2 = document.getElementById('display-line2');
+            const container = document.getElementById('title-container'); 
+            
+            container.style.fontFamily = style.font; 
+            textEl1.innerText = line1; 
+            textEl2.innerText = line2; 
+            textEl1.style.letterSpacing = style.spacing; 
+            textEl2.style.letterSpacing = style.spacing; 
+            textEl1.style.textShadow = style.shadow; 
+            textEl2.style.textShadow = style.shadow; 
+            textEl1.style.textTransform = style.transform; 
+            textEl2.style.textTransform = style.transform; 
+            textEl1.style.color = color; 
+            textEl2.style.color = color; 
+            textEl1.style.fontSize = (0.48 * size) + "px"; 
+            textEl2.style.fontSize = (0.48 * size) + "px"; 
+        }
+        
+        window.toggleMusicPlay = () => { 
+            if(!bgmAudio.src) return alert("Vui lòng tải nhạc lên trước"); 
+            if(isMusicPlaying) { 
+                bgmAudio.pause(); 
+                isMusicPlaying = false; 
+            } else { 
+                bgmAudio.play(); 
+                isMusicPlaying = true; 
+            } 
+            updatePlayBtnUI(isMusicPlaying); 
+        };
+
+        window.replayMusic = () => { 
+            if(!bgmAudio.src) return; 
+            bgmAudio.currentTime = 0; 
+            bgmAudio.play(); 
+            isMusicPlaying = true; 
+            updatePlayBtnUI(true); 
+        };
+
+        window.updateVolume = (volumeValue) => { 
+            bgmAudio.volume = volumeValue / 100; 
+        };
+
+        function updatePlayBtnUI(isPlaying) { 
+            document.getElementById('play-btn').innerText = isPlaying ? "⏸" : "⏯"; 
+        }
+
+        window.updateRotationSpeed = (speedValue) => { 
+            CONFIG.interaction.rotationSpeed = parseFloat(speedValue); 
+        };
+        
+        window.setMode = function(targetMode) {
+            STATE.mode = targetMode;
+            STATE.focusTarget = null;
+            const hintElement = document.getElementById('gesture-hint');
+            if(targetMode === 'TREE') hintElement.innerText = "Trạng thái: Cây thông (Gom lại)";
+            else if(targetMode === 'SCATTER') hintElement.innerText = "Trạng thái: Tinh vân (Phân tán)";
+            else if(targetMode === 'FOCUS') hintElement.innerText = "Trạng thái: Đang bắt ảnh";
+        }
+
+        window.triggerPhotoGrab = () => { 
+            let closestPhoto = null;
+            let minDistance = Infinity; 
+            STATE.focusType = Math.floor(Math.random() * 4); 
+            
+            particleSystem.filter(p => p.type === 'PHOTO').forEach(p => { 
+                p.mesh.updateMatrixWorld(); 
+                const position = new THREE.Vector3(); 
+                p.mesh.getWorldPosition(position); 
+                const screenPos = position.project(camera); 
+                const dist = Math.hypot(screenPos.x, screenPos.y); 
+                
+                if(screenPos.z < 1 && dist < CONFIG.interaction.grabRadius) {
+                    if(dist < minDistance) {
+                        minDistance = dist;
+                        closestPhoto = p.mesh;
+                    }
+                } 
+            }); 
+            
+            if(closestPhoto) {
+                setMode('FOCUS'); 
+                STATE.focusTarget = closestPhoto; 
+            } else {
+                setMode('SCATTER');
             }
+        };
+        
+        window.startRotate = (direction) => { 
+            if(direction === 'up') manualRotateState.x = -1; 
+            if(direction === 'down') manualRotateState.x = 1; 
+            if(direction === 'left') manualRotateState.y = -1; 
+            if(direction === 'right') manualRotateState.y = 1; 
+        };
 
-            initThree(); setupEnvironment(); setupLights(); createParticles(); createDust(); 
-            setupPostProcessing(); setupEvents(); animate();
-            
-            setTimeout(() => { document.getElementById('loader').style.opacity = 0; setTimeout(()=>document.getElementById('loader').remove(), 500); }, 1500);
-            
-            loadTextConfig();
-            initDB().then(async () => {
-                const medias = await loadMediaFromDB();
-                if(medias?.length > 0) {
-                    medias.forEach(m => {
-                        const url = URL.createObjectURL(m.blob);
-                        createMediaTexture(url, m.id, m.isVideo, m.msg);
-                    });
-                }
-            });
+        window.stopRotate = () => { 
+            manualRotateState = {x: 0, y: 0}; 
+        };
 
-            initMediaPipe(); initDraggableTitle(); setupTouchControls();
-        }
+        window.resetRotation = () => { 
+            STATE.rotation = {x: 0, y: 0}; 
+            if(STATE.mode !== 'TREE') setMode('TREE'); 
+        };
 
         function initThree() { 
-            scene=new THREE.Scene(); scene.background=new THREE.Color(CONFIG.colors.bg); scene.fog=new THREE.FogExp2(CONFIG.colors.bg,0.015); 
-            camera=new THREE.PerspectiveCamera(42,window.innerWidth/window.innerHeight,0.1,1000); camera.position.set(0,2,CONFIG.camera.z); 
-            renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:"high-performance"}); renderer.setSize(window.innerWidth,window.innerHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio,2)); renderer.toneMapping=THREE.ReinhardToneMapping; renderer.toneMappingExposure=2.2; 
-            document.getElementById('canvas-container').appendChild(renderer.domElement); 
-            mainGroup=new THREE.Group(); scene.add(mainGroup); 
+            const container = document.getElementById('canvas-container'); 
+            scene = new THREE.Scene(); 
+            scene.background = new THREE.Color(CONFIG.colors.bg); 
+            scene.fog = new THREE.FogExp2(CONFIG.colors.bg, 0.01); 
+            camera = new THREE.PerspectiveCamera(42, window.innerWidth/window.innerHeight, 0.1, 1000); 
+            camera.position.set(0, 2, CONFIG.camera.z); 
+            renderer = new THREE.WebGLRenderer({antialias: true, alpha: false, powerPreference: "high-performance"}); 
+            renderer.setSize(window.innerWidth, window.innerHeight); 
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
+            renderer.toneMapping = THREE.ReinhardToneMapping; 
+            renderer.toneMappingExposure = 2.2; 
+            container.appendChild(renderer.domElement); 
+            mainGroup = new THREE.Group(); 
+            scene.add(mainGroup); 
         }
-        function setupEnvironment() { const p=new THREE.PMREMGenerator(renderer); scene.environment=p.fromScene(new RoomEnvironment(),0.04).texture; }
+
+        function setupEnvironment() { 
+            const pmremGenerator = new THREE.PMREMGenerator(renderer); 
+            scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture; 
+        }
+
         function setupLights() { 
-            scene.add(new THREE.AmbientLight(0xffffff, 0.8)); 
-            const pointLight = new THREE.PointLight(0xff69b4, 2, 30); pointLight.position.set(0, 5, 0); mainGroup.add(pointLight); 
-            const spotLight1 = new THREE.SpotLight(0xffb6c1, 1000); spotLight1.position.set(30, 40, 40); spotLight1.angle=0.5; spotLight1.penumbra=0.5; scene.add(spotLight1); 
-            const dirLight = new THREE.DirectionalLight(0xffffff, 1); dirLight.position.set(0, 0, 50); scene.add(dirLight); 
+            scene.add(new THREE.AmbientLight(0xffffff, 0.6)); 
+            const pointLight = new THREE.PointLight(0xffaa00, 2, 20); 
+            pointLight.position.set(0, 5, 0); 
+            mainGroup.add(pointLight); 
+            
+            const spotLight1 = new THREE.SpotLight(0xffcc66, 1200); 
+            spotLight1.position.set(30, 40, 40); 
+            spotLight1.angle = 0.5; 
+            spotLight1.penumbra = 0.5; 
+            scene.add(spotLight1); 
+            
+            const spotLight2 = new THREE.SpotLight(0x6688ff, 600); 
+            spotLight2.position.set(-30, 20, -30); 
+            scene.add(spotLight2); 
+            
+            const dirLight = new THREE.DirectionalLight(0xffeebb, 0.8); 
+            dirLight.position.set(0, 0, 50); 
+            scene.add(dirLight); 
         }
+
         function setupPostProcessing() { 
-            composer=new EffectComposer(renderer); composer.addPass(new RenderPass(scene,camera)); 
-            // Bloom threshold cao để nền trắng không bị lóa, chỉ hạt hồng phát sáng
-            const b=new UnrealBloomPass(new THREE.Vector2(window.innerWidth,window.innerHeight), 1.2, 0.6, 0.85); 
-            b.threshold=0.8; b.strength=0.7; b.radius=0.6; composer.addPass(b); 
+            const renderPass = new RenderPass(scene, camera); 
+            const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85); 
+            bloomPass.threshold = 0.7; 
+            bloomPass.strength = 0.45; 
+            bloomPass.radius = 0.4; 
+            composer = new EffectComposer(renderer); 
+            composer.addPass(renderPass); 
+            composer.addPass(bloomPass); 
         }
 
-        // --- DATABASE LOCAL FILES ---
-        function initDB() { 
-            return new Promise(r=>{const q=indexedDB.open(DB_NAME,1);q.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('media'))d.createObjectStore('media',{keyPath:"id"});if(!d.objectStoreNames.contains('music'))d.createObjectStore('music',{keyPath:"id"})};q.onsuccess=e=>{db=e.target.result;r(db)};q.onerror=()=>r(null)});
+        function createTextures() { 
+            const canvas2d = document.createElement('canvas'); 
+            canvas2d.width = 128; 
+            canvas2d.height = 128; 
+            const ctx = canvas2d.getContext('2d'); 
+            ctx.fillStyle = '#ffffff'; 
+            ctx.fillRect(0, 0, 128, 128); 
+            ctx.fillStyle = '#880000'; 
+            ctx.beginPath(); 
+            for(let i = -128; i < 256; i += 32) {
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i+32, 128);
+                ctx.lineTo(i+16, 128);
+                ctx.lineTo(i-16, 0);
+            } 
+            ctx.fill(); 
+            caneTexture = new THREE.CanvasTexture(canvas2d); 
+            caneTexture.wrapS = caneTexture.wrapT = THREE.RepeatWrapping; 
+            caneTexture.repeat.set(3, 3); 
         }
-        function saveMediaToDB(blob, isVideo, msg) {
-            if(!db) return null;
-            return new Promise(r => {
-                const id = Date.now().toString() + Math.random().toString(36).substring(2,7);
-                const tx = db.transaction('media',"readwrite");
-                tx.objectStore('media').add({id, blob, isVideo, msg});
-                tx.oncomplete = () => r(id);
-            });
-        }
-        function loadMediaFromDB() {
-            if(!db) return Promise.resolve([]); 
-            return new Promise(r=>{db.transaction('media',"readonly").objectStore('media').getAll().onsuccess=e=>r(e.target.result)});
-        }
-        function deleteMediaFromDB(id){if(db)db.transaction('media',"readwrite").objectStore('media').delete(id);}
-        function clearMediaDB(){if(db)db.transaction('media',"readwrite").objectStore('media').clear();}
-        
-        function saveMusicToDB(b){if(!db)return;db.transaction('music',"readwrite").objectStore('music').put({id:'bgm',blob:b});}
-        function loadMusicFromDB(){if(!db)return Promise.resolve(null);return new Promise(r=>{db.transaction('music',"readonly").objectStore('music').get('bgm').onsuccess=e=>r(e.target.result?e.target.result.blob:null)});}
 
-        // --- MÔ HÌNH TOÁN HỌC TRÁI TIM 3D ---
-        class Particle {
-            constructor(m,t){this.mesh=m;this.type=t;this.posTree=new THREE.Vector3();this.posScatter=new THREE.Vector3();this.baseScale=m.scale.x;this.isVideo=false;this.videoEl=null;const s=(t==='PHOTO')?0.3:2.0;this.spinSpeed=new THREE.Vector3((Math.random()-0.5)*s,(Math.random()-0.5)*s,(Math.random()-0.5)*s);this.calcPos();}
-            calcPos(){
-                // Trái tim 3D (Thể tích)
-                let u = Math.random() * Math.PI * 2;
-                let v = Math.random() * Math.PI * 2;
-                let rDist = Math.cbrt(Math.random()); 
-                
-                let x = 16 * Math.pow(Math.sin(u), 3);
-                let y = 13 * Math.cos(u) - 5 * Math.cos(2*u) - 2 * Math.cos(3*u) - Math.cos(4*u);
-                let z = 5 * Math.sin(v); // Độ dày
-                z *= (1 - Math.abs(x)/16); // Vát viền mỏng đi
-                
-                let scale = 0.55; 
-                this.posTree.set(x * scale * rDist, (y * scale * rDist) + 5, z * scale * rDist);
-                
-                // Phân tán (Cầu rỗng)
-                let rs = 10 + Math.random()*15;
-                const th = Math.random()*Math.PI*2, ph = Math.acos(2*Math.random()-1);
-                this.posScatter.set(rs*Math.sin(ph)*Math.cos(th), rs*Math.sin(ph)*Math.sin(th), rs*Math.cos(ph));
+        window.updateSnowSettings = () => { 
+            CONFIG.snow.sizeBase = parseFloat(document.getElementById('slider-snow-size').value); 
+            CONFIG.snow.count = parseInt(document.getElementById('slider-snow-count').value); 
+            createSnow(); 
+        };
+
+        window.updateSnowSpeed = (speedValue) => { 
+            CONFIG.snow.speed = parseFloat(speedValue); 
+        };
+
+        function createSnow() {
+            if(snowInstancedMesh) {
+                scene.remove(snowInstancedMesh); 
+                snowInstancedMesh.geometry.dispose(); 
+                snowInstancedMesh.material.dispose(); 
+                snowInstancedMesh = null; 
+                snowData = [];
             }
-            update(dt,mode,ft){
-                let tg = this.posTree; 
-                if(mode==='SCATTER') tg = this.posScatter; 
-                else if(mode==='FOCUS'){
-                    if(this.mesh===ft){
-                        let off = new THREE.Vector3(0,0,32);
-                        const im = new THREE.Matrix4().copy(mainGroup.matrixWorld).invert();
-                        tg = off.applyMatrix4(im);
-                    }else tg = this.posScatter;
+            if(CONFIG.snow.count <= 0) return;
+            
+            const geometry = new THREE.IcosahedronGeometry(CONFIG.snow.sizeBase, 0);
+            const material = new THREE.MeshPhysicalMaterial({
+                color: 0xffffff, metalness: 0, roughness: 0.15, 
+                transmission: 0.9, thickness: 0.5, envMapIntensity: 1.5, 
+                clearcoat: 1, clearcoatRoughness: 0.1, ior: 1.33
+            });
+            
+            snowInstancedMesh = new THREE.InstancedMesh(geometry, material, CONFIG.snow.count); 
+            snowInstancedMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+            
+            for(let i = 0; i < CONFIG.snow.count; i++) {
+                snowDummy.position.set(
+                    (Math.random() - 0.5) * CONFIG.snow.range, 
+                    Math.random() * CONFIG.snow.range, 
+                    (Math.random() - 0.5) * CONFIG.snow.range
+                );
+                snowDummy.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+                
+                const scale = 0.5 + Math.random() * CONFIG.snow.sizeVar; 
+                snowDummy.scale.set(scale, scale, scale); 
+                snowDummy.updateMatrix();
+                
+                snowInstancedMesh.setMatrixAt(i, snowDummy.matrix);
+                snowData.push({
+                    vy: (Math.random() * 0.5 + 0.8), 
+                    rx: (Math.random() - 0.5) * 2, 
+                    ry: (Math.random() - 0.5) * 2, 
+                    rz: (Math.random() - 0.5) * 2
+                });
+            } 
+            scene.add(snowInstancedMesh);
+        }
+
+        class Particle {
+            constructor(meshObj, typeStr, isDustFlag = false) {
+                this.mesh = meshObj;
+                this.type = typeStr;
+                this.isDust = isDustFlag;
+                this.posTree = new THREE.Vector3();
+                this.posScatter = new THREE.Vector3();
+                this.baseScale = meshObj.scale.x;
+                this.photoId = null;
+                
+                const speedScale = (typeStr === 'PHOTO') ? 0.3 : 2.0;
+                this.spinSpeed = new THREE.Vector3(
+                    (Math.random() - 0.5) * speedScale,
+                    (Math.random() - 0.5) * speedScale,
+                    (Math.random() - 0.5) * speedScale
+                );
+                
+                this.calcPos();
+            }
+
+            calcPos() {
+                const height = CONFIG.particles.treeHeight;
+                let tFactor = Math.pow(Math.random(), 0.8);
+                const yPos = (tFactor * height) - (height / 2);
+                
+                let radiusMax = Math.max(0.5, CONFIG.particles.treeRadius * (1.0 - tFactor));
+                const angle = tFactor * 50 * Math.PI + Math.random() * Math.PI;
+                const radius = radiusMax * (0.8 + Math.random() * 0.4);
+                
+                this.posTree.set(Math.cos(angle) * radius, yPos, Math.sin(angle) * radius);
+                
+                let scatterRadius = this.isDust ? (12 + Math.random() * 20) : (8 + Math.random() * 12);
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                
+                this.posScatter.set(
+                    scatterRadius * Math.sin(phi) * Math.cos(theta),
+                    scatterRadius * Math.sin(phi) * Math.sin(theta),
+                    scatterRadius * Math.cos(phi)
+                );
+            }
+
+            update(deltaTime, currentMode, focusTarget) {
+                let targetPos = this.posTree; 
+                
+                if(currentMode === 'SCATTER') {
+                    targetPos = this.posScatter; 
+                } else if(currentMode === 'FOCUS') {
+                    if(this.mesh === focusTarget) {
+                        let offset = new THREE.Vector3(0, 1, 38);
+                        if(STATE.focusType === 1) offset.set(-4, 2, 35);
+                        else if(STATE.focusType === 2) offset.set(3, 0, 32);
+                        else if(STATE.focusType === 3) offset.set(0, -2.5, 30);
+                        
+                        const inverseMatrix = new THREE.Matrix4().copy(mainGroup.matrixWorld).invert();
+                        targetPos = offset.applyMatrix4(inverseMatrix);
+                    } else {
+                        targetPos = this.posScatter;
+                    }
                 }
                 
-                this.mesh.position.lerp(tg,((mode==='FOCUS'&&this.mesh===ft)?8.0:4.0)*dt);
+                const lerpSpeed = (currentMode === 'FOCUS' && this.mesh === focusTarget) ? 8.0 : 4.0; 
+                this.mesh.position.lerp(targetPos, lerpSpeed * deltaTime);
                 
-                if(mode==='SCATTER'){
-                    this.mesh.rotation.x += this.spinSpeed.x*dt; this.mesh.rotation.y += this.spinSpeed.y*dt; this.mesh.rotation.z += this.spinSpeed.z*dt;
-                } else if(mode==='TREE'){
-                    this.mesh.rotation.x = THREE.MathUtils.lerp(this.mesh.rotation.x,0,dt); this.mesh.rotation.z = THREE.MathUtils.lerp(this.mesh.rotation.z,0,dt);
-                    this.mesh.rotation.y += 0.5*dt;
+                if(currentMode === 'SCATTER') {
+                    this.mesh.rotation.x += this.spinSpeed.x * deltaTime;
+                    this.mesh.rotation.y += this.spinSpeed.y * deltaTime;
+                    this.mesh.rotation.z += this.spinSpeed.z * deltaTime;
+                } else if(currentMode === 'TREE') {
+                    this.mesh.rotation.x = THREE.MathUtils.lerp(this.mesh.rotation.x, 0, deltaTime);
+                    this.mesh.rotation.z = THREE.MathUtils.lerp(this.mesh.rotation.z, 0, deltaTime);
+                    this.mesh.rotation.y += 0.5 * deltaTime;
                 }
                 
-                if(mode==='FOCUS' && this.mesh===ft) this.mesh.lookAt(camera.position); 
+                if(currentMode === 'FOCUS' && this.mesh === focusTarget) {
+                    this.mesh.lookAt(camera.position);
+                    if(STATE.focusType === 1) this.mesh.rotateZ(0.38);
+                    if(STATE.focusType === 2) this.mesh.rotateZ(-0.15);
+                    if(STATE.focusType === 3) this.mesh.rotateX(-0.4);
+                }
                 
-                let s = this.baseScale;
-                if(mode==='SCATTER' && this.type==='PHOTO') s = this.baseScale*2.5;
-                else if(mode==='FOCUS'){ if(this.mesh===ft) s=3.8; else s=this.baseScale*0.8; }
-                this.mesh.scale.lerp(new THREE.Vector3(s,s,s),6*dt);
+                let scaleVal = this.baseScale;
+                
+                if(this.isDust) {
+                    scaleVal = this.baseScale * (0.8 + 0.4 * Math.sin(clock.elapsedTime * 4 + this.mesh.id));
+                    if(currentMode === 'TREE') scaleVal = 0;
+                } else if(currentMode === 'SCATTER' && this.type === 'PHOTO') {
+                    scaleVal = this.baseScale * 2.5;
+                } else if(currentMode === 'FOCUS') {
+                    if(this.mesh === focusTarget) {
+                        if(STATE.focusType === 2) scaleVal = 3.5;
+                        else if(STATE.focusType === 3) scaleVal = 4.8;
+                        else scaleVal = 3.0;
+                    } else {
+                        scaleVal = this.baseScale * 0.8;
+                    }
+                }
+                
+                this.mesh.scale.lerp(new THREE.Vector3(scaleVal, scaleVal, scaleVal), 6 * deltaTime);
             }
         }
 
         function createParticles() {
-            const sg=new THREE.SphereGeometry(0.4, 16, 16); 
-            const bg=new THREE.BoxGeometry(0.5,0.5,0.5); 
+            const sphereGeo = new THREE.SphereGeometry(0.5, 32, 32); 
+            const boxGeo = new THREE.BoxGeometry(0.55, 0.55, 0.55); 
+            const curve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(0, -0.5, 0),
+                new THREE.Vector3(0, 0.3, 0),
+                new THREE.Vector3(0.1, 0.5, 0),
+                new THREE.Vector3(0.3, 0.4, 0)
+            ]); 
+            const tubeGeo = new THREE.TubeGeometry(curve, 16, 0.08, 8, false);
             
-            // Chất liệu hồng Glow cực xịn
-            const mHot = new THREE.MeshStandardMaterial({color: CONFIG.colors.pinkHot, emissive: CONFIG.colors.pinkDeep, emissiveIntensity: 1.5, metalness: 0.2}); 
-            const mLight = new THREE.MeshStandardMaterial({color: CONFIG.colors.whiteGlow, emissive: CONFIG.colors.pinkLight, emissiveIntensity: 1.2, metalness: 0.1}); 
-            const mDeep = new THREE.MeshPhysicalMaterial({color: CONFIG.colors.pinkDeep, emissive: 0x880044, emissiveIntensity: 1, clearcoat: 1}); 
-
-            for(let i=0; i<CONFIG.particles.count; i++){
-                const r=Math.random(); let m,t;
-                if(r<0.3){ m=new THREE.Mesh(bg, mLight); t='BOX'; }
-                else if(r<0.7){ m=new THREE.Mesh(sg, mHot); t='SPHERE_HOT'; }
-                else { m=new THREE.Mesh(sg, mDeep); t='SPHERE_DEEP'; }
+            const goldMaterial = new THREE.MeshStandardMaterial({color: CONFIG.colors.champagneGold, metalness: 1, roughness: 0.1, envMapIntensity: 2, emissive: 0x443300, emissiveIntensity: 0.3});
+            const greenMaterial = new THREE.MeshStandardMaterial({color: CONFIG.colors.deepGreen, metalness: 0.2, roughness: 0.8, emissive: 0x002200, emissiveIntensity: 0.2});
+            const redMaterial = new THREE.MeshPhysicalMaterial({color: CONFIG.colors.accentRed, metalness: 0.3, roughness: 0.2, clearcoat: 1, emissive: 0x330000});
+            const caneMat = new THREE.MeshStandardMaterial({map: caneTexture, roughness: 0.4});
+            
+            for(let i = 0; i < CONFIG.particles.count; i++) {
+                const randVal = Math.random();
+                let meshObj, typeStr;
                 
-                const s = 0.4 + Math.random()*0.6; m.scale.setScalar(s);
-                m.rotation.set(Math.random()*6,Math.random()*6,Math.random()*6);
-                mainGroup.add(m); particleSystem.push(new Particle(m,t));
+                if(randVal < 0.4) {
+                    meshObj = new THREE.Mesh(boxGeo, greenMaterial);
+                    typeStr = 'BOX';
+                } else if(randVal < 0.7) {
+                    meshObj = new THREE.Mesh(boxGeo, goldMaterial);
+                    typeStr = 'GOLD_BOX';
+                } else if(randVal < 0.92) {
+                    meshObj = new THREE.Mesh(sphereGeo, goldMaterial);
+                    typeStr = 'GOLD_SPHERE';
+                } else if(randVal < 0.97) {
+                    meshObj = new THREE.Mesh(sphereGeo, redMaterial);
+                    typeStr = 'RED';
+                } else {
+                    meshObj = new THREE.Mesh(tubeGeo, caneMat);
+                    typeStr = 'CANE';
+                }
+                
+                const scaleFactor = 0.4 + Math.random() * 0.5;
+                meshObj.scale.set(scaleFactor, scaleFactor, scaleFactor);
+                meshObj.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
+                
+                mainGroup.add(meshObj);
+                particleSystem.push(new Particle(meshObj, typeStr, false));
             }
+            
+            const starGeo = new THREE.OctahedronGeometry(1.2, 0);
+            const starMat = new THREE.MeshStandardMaterial({color: 0xffdd88, emissive: 0xffaa00, emissiveIntensity: 1, metalness: 1, roughness: 0});
+            const starMesh = new THREE.Mesh(starGeo, starMat);
+            starMesh.position.set(0, CONFIG.particles.treeHeight / 2 + 1.2, 0);
+            
+            mainGroup.add(starMesh);
             mainGroup.add(photoMeshGroup);
         }
 
-        function createDust(){
-            const g = new THREE.TetrahedronGeometry(0.08,0);
-            const m = new THREE.MeshBasicMaterial({color: 0xffb6c1, transparent:true, opacity:0.6});
-            for(let i=0; i<CONFIG.particles.dustCount; i++){
-                const ms = new THREE.Mesh(g,m);
-                ms.scale.setScalar(0.5+Math.random());
-                const p = new Particle(ms,'DUST');
-                p.isDust = true;
-                dustSystem.push(p);
-                mainGroup.add(ms);
-            }
-        }
-        
-        // --- TEXT CARD (LỜI CHÚC) ---
-        function createTextCard(msg) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 1024; canvas.height = 256;
-            const ctx = canvas.getContext('2d');
-            
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-            ctx.roundRect(0, 0, 1024, 256, 30); ctx.fill();
-            ctx.strokeStyle = '#ff69b4'; ctx.lineWidth = 10; ctx.stroke();
-
-            ctx.fillStyle = '#ff1493';
-            ctx.font = 'bold 50px "Microsoft YaHei", sans-serif';
-            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText(msg, 512, 128);
-
-            const tex = new THREE.CanvasTexture(canvas); tex.colorSpace = THREE.SRGBColorSpace;
-            const geo = new THREE.PlaneGeometry(1.6, 0.4);
-            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
-            return new THREE.Mesh(geo, mat);
-        }
-
-        function createMediaTexture(url, id, isVideo, msg) {
-            if (isVideo) {
-                const video = document.createElement('video');
-                video.src = url; video.crossOrigin = 'anonymous';
-                video.loop = true; video.muted = false; video.playsInline = true;
-                video.load();
-                
-                const tex = new THREE.VideoTexture(video); tex.colorSpace = THREE.SRGBColorSpace;
-                // Gọi sự kiện load data để lấy tỷ lệ khung hình
-                video.onloadedmetadata = () => { addMediaToScene(tex, id, video.videoWidth/video.videoHeight, true, msg, video); };
-            } else {
-                const img = new Image(); img.src = url;
-                img.onload = () => {
-                    const tex = new THREE.Texture(img); tex.colorSpace = THREE.SRGBColorSpace; tex.needsUpdate = true;
-                    addMediaToScene(tex, id, img.width/img.height, false, msg, null);
-                };
+        function createDust() {
+            const geo = new THREE.TetrahedronGeometry(0.08, 0);
+            const mat = new THREE.MeshBasicMaterial({color: 0xffeebb, transparent: true, opacity: 0.8});
+            for(let i = 0; i < CONFIG.particles.dustCount; i++) {
+                const meshObj = new THREE.Mesh(geo, mat);
+                meshObj.scale.setScalar(0.5 + Math.random());
+                mainGroup.add(meshObj);
+                particleSystem.push(new Particle(meshObj, 'DUST', true));
             }
         }
 
-        function addMediaToScene(tex, id, aspect, isVideo, msg, videoEl){
-            let w=1.6, h=1.6; if(aspect>1) h=w/aspect; else w=h*aspect;
+        function createDefaultPhotos() {
+            const canvas2d = document.createElement('canvas');
+            canvas2d.width = 512;
+            canvas2d.height = 512;
+            const ctx = canvas2d.getContext('2d');
+            ctx.fillStyle = '#050505';
+            ctx.fillRect(0, 0, 512, 512);
+            ctx.strokeStyle = '#eebb66';
+            ctx.lineWidth = 15;
+            ctx.strokeRect(20, 20, 472, 472);
+            ctx.font = '500 60px Times New Roman';
+            ctx.fillStyle = '#eebb66';
+            ctx.textAlign = 'center';
+            ctx.fillText("MERRY", 256, 230);
+            ctx.fillText("CHRISTMAS", 256, 300);
+            createPhotoTexture(canvas2d.toDataURL(), 'default');
+        }
+
+        function createPhotoTexture(baseData, idStr) {
+            const imgObj = new Image();
+            imgObj.src = baseData;
+            imgObj.onload = () => {
+                const tex = new THREE.Texture(imgObj);
+                tex.colorSpace = THREE.SRGBColorSpace;
+                tex.needsUpdate = true;
+                addPhotoToScene(tex, idStr, imgObj);
+            };
+        }
+
+        function addPhotoToScene(texData, idStr, imgObj) {
+            const aspect = imgObj.width / imgObj.height; 
+            let widthVal = 1.2, heightVal = 1.2; 
+            if(aspect > 1) heightVal = widthVal / aspect; 
+            else widthVal = heightVal * aspect;
             
-            const frameGeo = new THREE.BoxGeometry(w+0.1, h+0.1, 0.05); 
-            const frameMat = new THREE.MeshStandardMaterial({color: 0xffb6c1, metalness: 0.3, roughness: 0.2}); 
+            const frameGeo = new THREE.BoxGeometry(widthVal + 0.2, heightVal + 0.2, 0.05); 
+            const frameMat = new THREE.MeshStandardMaterial({color: 0xc5a059, metalness: 0.6, roughness: 0.5, envMapIntensity: 0.5}); 
             const frameMesh = new THREE.Mesh(frameGeo, frameMat); 
             
-            const planeGeo = new THREE.PlaneGeometry(w, h); 
-            const planeMat = new THREE.MeshBasicMaterial({map: tex}); 
-            const planeMesh = new THREE.Mesh(planeGeo, planeMat); planeMesh.position.z=0.03; 
+            const planeGeo = new THREE.PlaneGeometry(widthVal, heightVal); 
+            const planeMat = new THREE.MeshBasicMaterial({map: texData}); 
+            const planeMesh = new THREE.Mesh(planeGeo, planeMat); 
+            planeMesh.position.z = 0.04; 
             
-            const g = new THREE.Group(); g.add(frameMesh); g.add(planeMesh); 
+            const groupObj = new THREE.Group(); 
+            groupObj.add(frameMesh); 
+            groupObj.add(planeMesh); 
             
-            // Chèn lời chúc nếu có
-            if (msg && msg.trim() !== "") {
-                const txtMesh = createTextCard(msg);
-                txtMesh.position.y = -(h/2 + 0.3); txtMesh.position.z = 0.02;
-                g.add(txtMesh);
-            }
+            const scaleFactor = 0.8; 
+            groupObj.scale.set(scaleFactor, scaleFactor, scaleFactor); 
+            photoMeshGroup.add(groupObj); 
             
-            g.scale.setScalar(0.7); photoMeshGroup.add(g); 
-            const pt = new Particle(g,'PHOTO'); 
-            pt.mediaId = id; pt.isVideo = isVideo; pt.videoEl = videoEl;
-            particleSystem.push(pt); photoMeshes.push(pt);
+            const partObj = new Particle(groupObj, 'PHOTO', false); 
+            partObj.photoId = idStr; 
+            partObj.texture = texData; 
+            particleSystem.push(partObj);
         }
 
-        window.applyParticleSettings=()=>{
-            const ph = particleSystem.filter(p=>p.type==='PHOTO'); const tr=[];
-            mainGroup.children.forEach(c=>{if(c!==photoMeshGroup)tr.push(c)}); tr.forEach(c=>mainGroup.remove(c));
-            particleSystem=[...ph]; dustSystem=[];
-            CONFIG.particles.count=parseInt(document.getElementById('slider-tree').value);
-            CONFIG.particles.dustCount=parseInt(document.getElementById('slider-dust').value);
-            createParticles(); createDust(); 
+        window.applyParticleSettings = () => {
+            const photoArr = particleSystem.filter(p => p.type === 'PHOTO');
+            const toRemove = [];
+            
+            mainGroup.children.forEach(child => {
+                if(child !== photoMeshGroup) toRemove.push(child);
+            });
+            
+            toRemove.forEach(child => mainGroup.remove(child));
+            particleSystem = [...photoArr];
+            
+            CONFIG.particles.count = parseInt(document.getElementById('slider-tree').value);
+            CONFIG.particles.dustCount = parseInt(document.getElementById('slider-dust').value);
+            
+            createParticles();
+            createDust();
+            createSnow();
         };
 
-        // --- TƯƠNG TÁC VUỐT / CHẠM (MOBILE + DESKTOP) ---
-        function setupTouchControls() {
-            const raycaster = new THREE.Raycaster();
-            const mouse = new THREE.Vector2();
-            let isDragging = false, startMouse = {x:0}, prevMouse = {x:0, y:0};
-
-            renderer.domElement.addEventListener('pointerdown', (e) => {
-                isDragging = true; startMouse.x = e.clientX; prevMouse = { x: e.clientX, y: e.clientY };
-            });
-
-            renderer.domElement.addEventListener('pointermove', (e) => {
-                if(isDragging && STATE.mode !== 'FOCUS') {
-                    const dx = e.clientX - prevMouse.x, dy = e.clientY - prevMouse.y;
-                    STATE.rotation.y += dx * 0.005; STATE.rotation.x += dy * 0.005;
-                    prevMouse = { x: e.clientX, y: e.clientY };
-                }
-            });
-
-            renderer.domElement.addEventListener('pointerup', (e) => {
-                isDragging = false;
-                const diffX = e.clientX - startMouse.x;
-                
-                if (Math.abs(diffX) > 50 && STATE.mode === 'FOCUS') {
-                    if (diffX < 0) focusNextPhoto(); else focusPrevPhoto();
-                    return;
-                }
-
-                if (Math.abs(diffX) < 10) {
-                    mouse.x = (e.clientX / window.innerWidth) * 2 - 1; mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-                    raycaster.setFromCamera(mouse, camera);
-                    const pMeshes = photoMeshes.map(p => p.mesh);
-                    const intersects = raycaster.intersectObjects(pMeshes, true);
-
-                    if(intersects.length > 0) {
-                        let obj = intersects[0].object; while(obj.parent && obj.parent.type === 'Group') obj = obj.parent;
-                        
-                        if(STATE.mode !== 'FOCUS' || STATE.focusTarget !== obj) {
-                            STATE.focusIndex = photoMeshes.findIndex(p => p.mesh === obj);
-                            setMode('FOCUS'); STATE.focusTarget = obj;
-                        } else {
-                            // Tap lần 2 để Play/Pause Video
-                            const pData = photoMeshes.find(p => p.mesh === obj);
-                            if(pData && pData.isVideo && pData.videoEl) {
-                                if(pData.videoEl.paused) { pData.videoEl.play(); activeVideoEl = pData.videoEl; }
-                                else { pData.videoEl.pause(); activeVideoEl = null; }
-                            }
-                        }
-                    } else if (STATE.mode === 'FOCUS') setMode('TREE');
-                }
-            });
-        }
-
-        // --- AI CAMERA (CHỐNG LỖI CỬ CHỈ) ---
-        async function initMediaPipe(){
+        async function initMediaPipe() {
             videoElement = document.getElementById('webcam-video');
-            if(navigator.mediaDevices?.getUserMedia){
-                try{ const s=await navigator.mediaDevices.getUserMedia({video:true}); videoElement.srcObject=s; videoElement.onloadedmetadata=()=>{videoElement.play();renderWebcamPreview()}; }catch(e){console.error(e)}
+            if(navigator.mediaDevices?.getUserMedia) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({video: true});
+                    videoElement.srcObject = stream;
+                    videoElement.onloadedmetadata = () => {
+                        videoElement.play();
+                        renderWebcamPreview();
+                    };
+                } catch(err) {
+                    console.error(err);
+                }
             }
-            try{ const v=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"); handLandmarker=await HandLandmarker.createFromOptions(v,{baseOptions:{modelAssetPath:`https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,delegate:"GPU"},runningMode:"VIDEO",numHands:1}); predictWebcam(); }catch(e){console.warn(e)}
+            try {
+                const visionPack = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
+                handLandmarker = await HandLandmarker.createFromOptions(visionPack, {
+                    baseOptions: {
+                        modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+                        delegate: "GPU"
+                    },
+                    runningMode: "VIDEO",
+                    numHands: 1
+                });
+                predictWebcam();
+            } catch(err) {
+                console.warn(err);
+            }
         }
-        function renderWebcamPreview(){const c=document.getElementById('webcam-canvas'),x=c.getContext('2d',{willReadFrequently:true});function d(){if(videoElement.readyState>=2)x.drawImage(videoElement,0,0,c.width,c.height);requestAnimationFrame(d)}d()}
+
+        function renderWebcamPreview() {
+            const canvasEl = document.getElementById('webcam-canvas');
+            const ctx2d = canvasEl.getContext('2d', {willReadFrequently: true});
+            function drawLoop() {
+                if(videoElement.readyState >= 2) {
+                    ctx2d.drawImage(videoElement, 0, 0, canvasEl.width, canvasEl.height);
+                }
+                requestAnimationFrame(drawLoop);
+            }
+            drawLoop();
+        }
+
+        let lastVideoTime = -1;
         
-        let lastVideoTime = -1, lastActionTime = 0;
-        async function predictWebcam(){
-            if(aiEnabled && videoElement && videoElement.currentTime!==lastVideoTime && handLandmarker){
-                lastVideoTime=videoElement.currentTime; const r=handLandmarker.detectForVideo(videoElement,performance.now()); processGestures(r); document.getElementById('cam-status').classList.toggle('active',r.landmarks.length>0);
+        async function predictWebcam() {
+            if(videoElement && videoElement.currentTime !== lastVideoTime && handLandmarker) {
+                lastVideoTime = videoElement.currentTime;
+                const resultData = handLandmarker.detectForVideo(videoElement, performance.now());
+                processGestures(resultData);
+                document.getElementById('cam-status').classList.toggle('active', resultData.landmarks.length > 0);
             }
             requestAnimationFrame(predictWebcam);
         }
 
-        function processGestures(r){
-            if(r.landmarks && r.landmarks.length>0){
-                STATE.hand.detected=true; const lm=r.landmarks[0]; 
-                STATE.hand.x=(lm[9].x-0.5)*2; STATE.hand.y=(lm[9].y-0.5)*2;
+        function processGestures(resultData) {
+            if(resultData.landmarks && resultData.landmarks.length > 0) {
+                STATE.hand.detected = true;
+                const landmarks = resultData.landmarks[0];
+                STATE.hand.x = (landmarks[9].x - 0.5) * 2;
+                STATE.hand.y = (landmarks[9].y - 0.5) * 2;
                 
-                const wrist=lm[0], thumb=lm[4], index=lm[8], middleBase=lm[9], middleTip=lm[12];
-                const pinchDist = Math.hypot(thumb.x-index.x, thumb.y-index.y); 
-                const openDist = Math.hypot(middleTip.x-wrist.x, middleTip.y-wrist.y);
-                const handBoxSize = Math.hypot(middleBase.x-wrist.x, middleBase.y-wrist.y);
+                const thumbPos = landmarks[4];
+                const indexPos = landmarks[8];
+                const wristPos = landmarks[0];
+                const middlePos = landmarks[12];
                 
-                const isFist = openDist < 0.15;
-                const isPinch = pinchDist < 0.05 && openDist > 0.15;
-                const isOpen = openDist > 0.25 && handBoxSize <= 0.2;
-                const isPush = openDist > 0.25 && handBoxSize > 0.25; 
+                const pinchDist = Math.hypot(thumbPos.x - indexPos.x, thumbPos.y - indexPos.y);
+                const openDist = Math.hypot(middlePos.x - wristPos.x, middlePos.y - wristPos.y);
                 
-                const now = performance.now();
-                const canAct = (now - lastActionTime > 1000);
-
-                if (isFist) {
-                    if (STATE.mode === 'FOCUS') { setMode('TREE'); lastActionTime = now; }
-                } else if (isPush) {
-                    if (STATE.mode === 'FOCUS' && canAct) {
-                        const pData = photoMeshes.find(p => p.mesh === STATE.focusTarget);
-                        if (pData && pData.isVideo) { if(pData.videoEl.paused) {pData.videoEl.play(); activeVideoEl = pData.videoEl;} else {pData.videoEl.pause(); activeVideoEl = null;} } 
-                        else focusNextPhoto();
-                        lastActionTime = now;
-                    }
-                } else if (isPinch) {
-                    if (STATE.mode !== 'FOCUS' && canAct) { triggerPhotoGrab(); lastActionTime = now; }
-                } else if (isOpen) {
-                    if (STATE.mode === 'FOCUS') {
-                       if (STATE.hand.x > 0.6 && canAct) { focusPrevPhoto(); lastActionTime = now; }
-                       if (STATE.hand.x < -0.6 && canAct) { focusNextPhoto(); lastActionTime = now; }
-                    } else {
-                       setMode('SCATTER');
-                       const th=0.3, s=CONFIG.interaction.rotationSpeed;
-                       if(STATE.hand.x>th) STATE.rotation.y -= s*0.016*(STATE.hand.x-th);
-                       else if(STATE.hand.x<-th) STATE.rotation.y -= s*0.016*(STATE.hand.x+th);
-                    }
+                if(STATE.mode === 'FOCUS') {
+                    if(pinchDist > 0.1) setMode('SCATTER');
+                    return;
                 }
-            } else STATE.hand.detected=false;
+                
+                if(pinchDist < 0.05 && STATE.mode !== 'FOCUS') {
+                    triggerPhotoGrab();
+                } else if(openDist > 0.4) {
+                    setMode('SCATTER');
+                } else if(openDist < 0.2) {
+                    setMode('TREE');
+                }
+            } else {
+                STATE.hand.detected = false;
+            }
         }
 
-        window.setupEvents=()=>{
-            window.addEventListener('resize',()=>{camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);composer.setSize(window.innerWidth,window.innerHeight)});
-            document.getElementById('music-input').addEventListener('change', async e=>{
-                const f=e.target.files[0]; if(f){ saveMusicToDB(f); bgmAudio.src=URL.createObjectURL(f); bgmAudio.play().then(()=>{isMusicPlaying=true; document.getElementById('play-btn').innerText="⏸"}).catch(console.error)}
+        window.setupEvents = () => {
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                composer.setSize(window.innerWidth, window.innerHeight);
             });
-            document.getElementById('file-input').addEventListener('change', async e => {
-                for(let f of e.target.files) {
-                    let isVid = f.type.startsWith('video/');
-                    let msg = prompt("Nhập lời chúc đính kèm ảnh/video này (để trống nếu không muốn):", "");
-                    let id = await saveMediaToDB(f, isVid, msg);
-                    let url = URL.createObjectURL(f);
-                    createMediaTexture(url, id, isVid, msg);
+            
+            document.getElementById('file-input').addEventListener('change', event => {
+                Array.from(event.target.files).forEach(fileObj => {
+                    const readerObj = new FileReader();
+                    readerObj.onload = ev => {
+                        const imgObj = new Image();
+                        imgObj.src = ev.target.result;
+                        imgObj.onload = () => {
+                            const genId = savePhotoToDB(ev.target.result);
+                            createPhotoTexture(ev.target.result, genId);
+                        };
+                    };
+                    readerObj.readAsDataURL(fileObj);
+                });
+            });
+            
+            document.getElementById('music-input').addEventListener('change', event => {
+                const fileObj = event.target.files[0];
+                if(fileObj) {
+                    saveMusicToDB(fileObj);
+                    bgmAudio.src = URL.createObjectURL(fileObj);
+                    bgmAudio.play().then(() => {
+                        isMusicPlaying = true;
+                        updatePlayBtnUI(true);
+                    }).catch(console.error);
+                }
+            });
+            
+            window.addEventListener('keydown', (event) => {
+                if (event.target.tagName === 'INPUT' || event.target.tagName === 'SELECT') return;
+                const codeStr = event.code;
+                const keyStr = event.key.toLowerCase();
+                
+                if (keyStr === 'h') window.toggleUI();
+                if (codeStr === 'Space') { event.preventDefault(); setMode('TREE'); }
+                if (keyStr === 'z') setMode('SCATTER');
+                if (keyStr === 'x') triggerPhotoGrab();
+
+                if (codeStr === 'ArrowUp') manualRotateState.x = -1;
+                if (codeStr === 'ArrowDown') manualRotateState.x = 1;
+                if (codeStr === 'ArrowLeft') manualRotateState.y = -1;
+                if (codeStr === 'ArrowRight') manualRotateState.y = 1;
+            });
+            
+            window.addEventListener('keyup', (event) => {
+                const codeStr = event.code;
+                if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(codeStr)) {
+                    manualRotateState = { x: 0, y: 0 };
                 }
             });
         }
 
-        window.openDeleteManager=async()=>{
-            document.getElementById('delete-manager').classList.remove('hidden'); const g=document.getElementById('photo-grid'); g.innerHTML='';
-            const ps=await loadMediaFromDB();
-            if(!ps||ps.length===0) g.innerHTML='<div style="color:#888;">Chưa có dữ liệu</div>';
-            else ps.forEach(p=>{
-                const d=document.createElement('div'); d.className='photo-item';
-                let tag;
-                if(p.isVideo) { tag = document.createElement('video'); tag.src = URL.createObjectURL(p.blob); tag.muted=true; tag.autoplay=true; tag.loop=true; }
-                else { tag = document.createElement('img'); tag.src = URL.createObjectURL(p.blob); }
-                tag.className='photo-thumb';
-                const b=document.createElement('div'); b.className='delete-x'; b.innerText='X';
-                b.onclick=e=>{e.stopPropagation();confirmDelete(p.id,d)};
-                d.appendChild(tag); d.appendChild(b); g.appendChild(d);
-            });
+        window.openDeleteManager = async () => {
+            document.getElementById('delete-manager').classList.remove('hidden');
+            const gridEl = document.getElementById('photo-grid');
+            gridEl.innerHTML = '';
+            
+            const photoList = await loadPhotosFromDB();
+            if(!photoList || photoList.length === 0) {
+                gridEl.innerHTML = '<div style="color:#888;">Chưa có ảnh nào</div>';
+            } else {
+                photoList.forEach(item => {
+                    const divWrap = document.createElement('div');
+                    divWrap.className = 'photo-item';
+                    
+                    const imgEl = document.createElement('img');
+                    imgEl.className = 'photo-thumb';
+                    imgEl.src = item.data;
+                    
+                    const btnDel = document.createElement('div');
+                    btnDel.className = 'delete-x';
+                    btnDel.innerText = 'X';
+                    
+                    btnDel.onclick = ev => {
+                        ev.stopPropagation();
+                        confirmDelete(item.id, divWrap);
+                    };
+                    
+                    divWrap.appendChild(imgEl);
+                    divWrap.appendChild(btnDel);
+                    gridEl.appendChild(divWrap);
+                });
+            }
         }
-        window.confirmDelete=(id,el)=>{deleteMediaFromDB(id);el.remove();const p=particleSystem.find(pa=>pa.mediaId===id);if(p){photoMeshGroup.remove(p.mesh);particleSystem.splice(particleSystem.indexOf(p),1);photoMeshes.splice(photoMeshes.indexOf(p),1)}}
-        window.clearAllPhotos=()=>{if(confirm("Xóa toàn bộ nội dung?")){clearMediaDB();photoMeshes.forEach(p=>photoMeshGroup.remove(p.mesh));particleSystem=particleSystem.filter(p=>p.type!=='PHOTO');photoMeshes=[];window.openDeleteManager()}}
-        window.closeDeleteManager=()=>{document.getElementById('delete-manager').classList.add('hidden')}
+
+        window.confirmDelete = (idStr, domEl) => {
+            deletePhotoFromDB(idStr);
+            domEl.remove();
+            
+            const partTarget = particleSystem.find(p => p.photoId === idStr);
+            if(partTarget) {
+                photoMeshGroup.remove(partTarget.mesh);
+                particleSystem.splice(particleSystem.indexOf(partTarget), 1);
+            }
+        }
+
+        window.clearAllPhotos = () => {
+            if(confirm("Bạn có chắc chắn muốn xóa tất cả ảnh không?")) {
+                clearPhotosDB();
+                particleSystem.filter(p => p.type === 'PHOTO').forEach(p => photoMeshGroup.remove(p.mesh));
+                particleSystem = particleSystem.filter(p => p.type !== 'PHOTO');
+                window.openDeleteManager();
+            }
+        }
+
+        window.closeDeleteManager = () => {
+            document.getElementById('delete-manager').classList.add('hidden');
+        }
 
         function animate() {
-            requestAnimationFrame(animate); const dt=clock.getDelta(); const et=clock.getElapsedTime();
+            requestAnimationFrame(animate); 
+            const deltaTime = clock.getDelta(); 
+            const elapsedTime = clock.getElapsedTime();
             
-            // Chuyển động bụi
-            dustSystem.forEach(p => {
-                p.mesh.position.y += Math.sin(et + p.mesh.id) * 0.5 * dt;
-                p.mesh.position.x += Math.cos(et + p.mesh.id) * 0.5 * dt;
-                p.mesh.scale.setScalar(0.5 + 0.3*Math.sin(et*2 + p.mesh.id));
-            });
+            if(snowInstancedMesh && STATE.mode === 'TREE') {
+                snowInstancedMesh.visible = true;
+                for(let i = 0; i < CONFIG.snow.count; i++) {
+                    snowInstancedMesh.getMatrixAt(i, snowDummy.matrix);
+                    snowDummy.matrix.decompose(snowDummy.position, snowDummy.quaternion, snowDummy.scale);
+                    const dataObj = snowData[i];
+                    
+                    snowDummy.position.y -= dataObj.vy * CONFIG.snow.speed * deltaTime;
+                    snowDummy.position.x += Math.sin(elapsedTime * 0.5 + i) * 2.5 * deltaTime;
+                    snowDummy.position.z += Math.cos(elapsedTime * 0.3 + i) * 1.5 * deltaTime;
+                    
+                    snowDummy.rotation.x += dataObj.rx * deltaTime;
+                    snowDummy.rotation.y += dataObj.ry * deltaTime;
+                    snowDummy.rotation.z += dataObj.rz * deltaTime;
+                    
+                    if(snowDummy.position.y < -25) {
+                        snowDummy.position.y = 40;
+                        snowDummy.position.x = (Math.random() - 0.5) * CONFIG.snow.range;
+                        snowDummy.position.z = (Math.random() - 0.5) * CONFIG.snow.range;
+                    }
+                    
+                    snowDummy.updateMatrix();
+                    snowInstancedMesh.setMatrixAt(i, snowDummy.matrix);
+                } 
+                snowInstancedMesh.instanceMatrix.needsUpdate = true;
+            } else if(snowInstancedMesh) {
+                snowInstancedMesh.visible = false;
+            }
 
-            if(STATE.mode==='TREE'){STATE.rotation.y+=0.3*dt;STATE.rotation.x+=(0-STATE.rotation.x)*2.0*dt;}
-            else if (STATE.mode !== 'FOCUS') {STATE.rotation.y+=0.1*dt;}
+            if(manualRotateState.x !== 0 || manualRotateState.y !== 0) {
+                const rSpeed = CONFIG.interaction.rotationSpeed * 2.0;
+                STATE.rotation.x += manualRotateState.x * rSpeed * deltaTime;
+                STATE.rotation.y += manualRotateState.y * rSpeed * deltaTime;
+            } else if(STATE.mode === 'SCATTER' && STATE.hand.detected) {
+                const thresh = 0.3;
+                const rSpeed = CONFIG.interaction.rotationSpeed;
+                
+                if(STATE.hand.x > thresh) STATE.rotation.y -= rSpeed * deltaTime * (STATE.hand.x - thresh);
+                else if(STATE.hand.x < -thresh) STATE.rotation.y -= rSpeed * deltaTime * (STATE.hand.x + thresh);
+                
+                if(STATE.hand.y < -thresh) STATE.rotation.x += rSpeed * deltaTime * (-STATE.hand.y - thresh);
+                else if(STATE.hand.y > thresh) STATE.rotation.x -= rSpeed * deltaTime * (STATE.hand.y - thresh);
+            } else {
+                if(STATE.mode === 'TREE') {
+                    STATE.rotation.y += 0.3 * deltaTime;
+                    STATE.rotation.x += (0 - STATE.rotation.x) * 2.0 * deltaTime;
+                } else {
+                    STATE.rotation.y += 0.1 * deltaTime;
+                }
+            }
             
-            mainGroup.rotation.y=STATE.rotation.y; mainGroup.rotation.x=STATE.rotation.x;
-            particleSystem.forEach(p=>p.update(dt,STATE.mode,STATE.focusTarget));
+            mainGroup.rotation.y = STATE.rotation.y;
+            mainGroup.rotation.x = STATE.rotation.x;
+            
+            particleSystem.forEach(p => p.update(deltaTime, STATE.mode, STATE.focusTarget));
             composer.render();
         }
+        
         init();
     </script>
 </body>
